@@ -1,10 +1,10 @@
 @import "tailwindcss";
+@import "./glass.css";
 
 /* ============================================================
    Kavento — Design tokens
-   Paleta oscura y cálida derivada del logo (sol ámbar→naranja,
-   "México" en teal). Ningún componente usa hex crudo: todo pasa
-   por estas variables.
+   La paleta oscura y cálida se conserva íntegra: es el fondo
+   sobre el que se apoya todo el vidrio.
    ============================================================ */
 
 :root {
@@ -13,12 +13,10 @@
   --bg-surface: #1d1712;
   --bg-elevated: #262019;
 
-  /* Acento solar (el círculo del logo) */
+  /* Acento solar (el disco del logo) */
   --accent-from: #ff7a1a;
   --accent-mid: #f79a2a;
   --accent-to: #ffc94a;
-  /* 45deg: sube de naranja abajo-izquierda a amarillo arriba-derecha,
-     igual que el disco del logotipo. */
   --accent-gradient: linear-gradient(
     45deg,
     var(--accent-from) 0%,
@@ -28,40 +26,45 @@
 
   /* Acento secundario ("México" del logo) */
   --accent-teal: #2fa8b8;
+  /* Variante clara del teal. El teal de marca da 4.24:1 sobre el
+     vidrio claro y no alcanza el AA de 4.5:1 para texto pequeño;
+     este da 6.1:1. Se usa solo para texto chico sobre vidrio. */
+  --accent-teal-hi: #5fc8d8;
 
   /* Texto */
   --text-primary: #f5efe6;
   --text-muted: #b5a995;
-  /* Aclarado desde #7d7365: aquel daba 3.46:1 sobre --bg-elevated y no
-     alcanzaba el AA de 4.5:1 para texto pequeño. Este da 5.3:1 ahí,
-     5.8:1 sobre --bg-surface y 6.3:1 sobre el fondo general. */
   --text-faint: #9c9382;
 
-  /* Líneas y vidrio */
+  /* Líneas */
   --border-subtle: rgba(255, 255, 255, 0.08);
   --border-strong: rgba(255, 255, 255, 0.16);
-  --glass-bg: rgba(29, 23, 18, 0.62);
 
-  /* Luz derramada del sol del hero */
-  --glow-warm: rgba(255, 122, 26, 0.14);
-  --glow-teal: rgba(47, 168, 184, 0.12);
+  /* Luz del campo de fondo */
+  --glow-warm: rgba(255, 122, 26, 0.3);
+  --glow-solar: rgba(255, 201, 74, 0.2);
+  --glow-teal: rgba(47, 168, 184, 0.2);
 
   /* Movimiento */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-soft: cubic-bezier(0.65, 0, 0.35, 1);
   --dur-fast: 180ms;
   --dur-base: 320ms;
   --dur-slow: 620ms;
 
-  /* Radios — jerarquía por radio, no un radio para todo */
-  --r-panel: 12px;
+  /* Radios — jerarquía por radio */
+  --r-panel: 20px;
+  --r-card: 12px;
   --r-portrait: 4px;
   --r-pill: 999px;
 
   /* Ritmo vertical */
-  --section-y: clamp(6rem, 12vh, 11rem);
-  --gutter: clamp(1.25rem, 5vw, 5.5rem);
-  --measure: 68ch;
+  --section-y: clamp(5.5rem, 11vh, 10rem);
+  --gutter: clamp(1.25rem, 5vw, 5rem);
+  --measure: 64ch;
+
+  /* Avance de la cortina del campo de fondo (0→1). Lo escribe el
+     motor de apilado en cada cuadro. */
+  --curtain: 0;
 }
 
 @theme inline {
@@ -71,16 +74,15 @@
   --color-ember: var(--accent-from);
   --color-solar: var(--accent-to);
   --color-teal: var(--accent-teal);
+  --color-teal-hi: var(--accent-teal-hi);
   --color-ink: var(--text-primary);
   --color-muted: var(--text-muted);
   --color-faint: var(--text-faint);
   --color-line: var(--border-subtle);
   --color-line-strong: var(--border-strong);
 
-  --font-display: var(--font-manrope);
+  --font-display: var(--font-figtree);
   --font-body: var(--font-inter);
-
-  --ease-expo: var(--ease-out-expo);
 }
 
 /* ============================================================
@@ -93,31 +95,23 @@
 
 html {
   scroll-behavior: smooth;
-  /* La navbar flotante mide ~72px; los anclas no deben quedar debajo */
   scroll-padding-top: 6rem;
   -webkit-text-size-adjust: 100%;
+  background-color: var(--bg-primary);
 }
 
 body {
-  background-color: var(--bg-primary);
+  background-color: transparent;
   color: var(--text-primary);
   font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-  font-size: 1.0625rem; /* 17px */
+  font-size: 1.0625rem;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
-}
-
-/* Grano: evita que el negro se lea plano/plantilla. Fijo, no scrollea. */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  pointer-events: none;
-  opacity: 0.032;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* `clip` y no `hidden`: `overflow:hidden` convierte al body en
+     contenedor de scroll y rompe todos los `position: sticky` del
+     apilado. `clip` recorta igual sin crear ese contenedor. */
+  overflow-x: clip;
 }
 
 ::selection {
@@ -125,10 +119,6 @@ body::after {
   color: #120e0a;
 }
 
-/* Foco visible y consistente en todo lo interactivo.
-   Se escriben las propiedades largas y no el atajo `outline`: con el
-   atajo, el var() del color no sustituye y el anillo hereda
-   currentColor, que sobre texto atenuado casi no se ve. */
 :focus-visible {
   outline-width: 2px;
   outline-style: solid;
@@ -139,38 +129,46 @@ body::after {
 
 /* ============================================================
    Tipografía
-   Manrope para display (tracking cerrado a tamaños grandes),
-   Inter para lectura.
+   El registro es el de tech-ish: tamaño grande con peso medio
+   (500), no ExtraBold. El peso alto a tamaño grande es justo lo
+   que hace que una portada se lea como plantilla.
    ============================================================ */
 
 .t-display {
   font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
-  font-weight: 800;
-  font-size: clamp(2.5rem, 5.6vw, 5rem);
-  line-height: 0.98;
-  letter-spacing: -0.035em;
+  font-weight: 500;
+  font-size: clamp(2.5rem, 6.2vw, 5.5rem);
+  line-height: 0.94;
+  letter-spacing: -0.032em;
   text-wrap: balance;
 }
 
 .t-h2 {
   font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
-  font-weight: 700;
-  font-size: clamp(2rem, 4.5vw, 3.375rem);
-  line-height: 1.05;
+  font-weight: 500;
+  font-size: clamp(2rem, 4.6vw, 3.75rem);
+  line-height: 1;
   letter-spacing: -0.028em;
   text-wrap: balance;
 }
 
 .t-h3 {
   font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
-  font-weight: 700;
-  font-size: clamp(1.375rem, 2.2vw, 1.875rem);
-  line-height: 1.15;
-  letter-spacing: -0.02em;
+  font-weight: 500;
+  font-size: clamp(1.5rem, 2.4vw, 2.125rem);
+  line-height: 1.08;
+  letter-spacing: -0.022em;
+}
+
+.t-eyebrow {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 0.9375rem;
+  color: var(--accent-teal);
 }
 
 .t-lead {
-  font-size: clamp(1.0625rem, 1.4vw, 1.25rem);
+  font-size: clamp(1.0625rem, 1.35vw, 1.1875rem);
   line-height: 1.55;
   color: var(--text-muted);
   max-width: var(--measure);
@@ -184,41 +182,16 @@ body::after {
 }
 
 /* ============================================================
-   Utilidades compartidas
+   Utilidades de disposición
    ============================================================ */
 
 .u-shell {
   width: 100%;
-  max-width: 84rem;
+  max-width: 88rem;
   margin-inline: auto;
   padding-inline: var(--gutter);
 }
 
-.u-section {
-  padding-block: var(--section-y);
-  position: relative;
-}
-
-/* Vidrio Apple-like: blur + borde de 1px translúcido + realce superior */
-.u-glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px) saturate(150%);
-  -webkit-backdrop-filter: blur(20px) saturate(150%);
-  border: 1px solid var(--border-subtle);
-  box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.06),
-    0 12px 40px -12px rgba(0, 0, 0, 0.6);
-}
-
-/* El degradado del logo como texto */
-.u-gradient-text {
-  background: var(--accent-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* Regla fina con desvanecido — separador, no caja */
 .u-rule {
   height: 1px;
   background: linear-gradient(90deg, var(--border-strong), transparent);
@@ -226,9 +199,209 @@ body::after {
 }
 
 /* ============================================================
-   Accesibilidad — prefers-reduced-motion
-   Las animaciones no esenciales se apagan y se renderiza el
-   estado final. Los canvas 3D se congelan (frameloop="never").
+   Apilado de secciones (baraja)
+   Cada sección se fija y la siguiente se le monta encima. El
+   `top` real lo calcula el motor en JS; aquí solo se declara la
+   escalera de z-index y el fondo opaco, sin el cual el apilado
+   no se distingue de un scroll normal.
+   ============================================================ */
+
+/* El fondo de cada carta es opaco a propósito: sin eso el apilado no
+   se distingue de un scroll normal. */
+.stack {
+  position: sticky;
+  top: 0;
+  background-color: var(--bg-primary);
+}
+
+.stack--alt {
+  background-color: var(--bg-surface);
+}
+
+/* La portada es la excepción: se deja transparente para que el campo
+   atmosférico se vea entero y la cortina tenga dónde abrirse. */
+.stack-1 {
+  background-color: transparent;
+}
+
+/* Como el resto de las cartas sí tapan el campo, cada una lleva su
+   propia luz local. Sin algo con estructura detrás, el vidrio no
+   refracta nada y se lee como un rectángulo gris. Es un solo
+   degradado por sección: barato de pintar y suficiente. */
+.stack::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      42% 38% at var(--lit-x, 78%) var(--lit-y, 22%),
+      var(--glow-warm) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      34% 30% at var(--lit-x2, 14%) var(--lit-y2, 82%),
+      var(--glow-teal) 0%,
+      transparent 72%
+    );
+}
+
+.stack-1::before {
+  content: none;
+}
+
+/* El contenido va por encima de esa luz. Las cortinas llevan su
+   z-index en el atributo style, así que no las alcanza esta regla. */
+.stack > * {
+  position: relative;
+  z-index: 1;
+}
+
+.stack-1 { z-index: 1; }
+.stack-2 { z-index: 10; }
+.stack-3 { z-index: 11; }
+.stack-4 { z-index: 12; }
+.stack-5 { z-index: 13; }
+.stack-6 { z-index: 14; }
+
+/* El contenido del hero retrocede mientras lo cubren. */
+[data-recede] {
+  transform-origin: 50% 35%;
+  will-change: transform, opacity;
+}
+
+/* ============================================================
+   Campo de fondo
+   Es lo que el vidrio refracta. Sin algo con estructura detrás,
+   el liquid glass no tiene nada que doblar y se ve como un
+   rectángulo gris.
+   ============================================================ */
+
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* Cortina: arranca como una ventana redondeada detrás del hero y
+     se abre a sangre completa conforme baja el scroll. Es el gesto
+     de tech-ish, movido por --curtain en lugar de por GSAP. */
+  clip-path: inset(
+    calc(7% - 7% * var(--curtain)) calc(11% - 11% * var(--curtain)) round
+      calc(44px - 44px * var(--curtain))
+  );
+}
+
+/* En pantallas angostas la ventana de la cortina se abre menos: con
+   el recorte de escritorio el canto cruza el contenido y se lee como
+   una caja, no como un marco. */
+ (max-width: 640px) {
+  .atmosphere {
+    clip-path: inset(
+      calc(4% - 4% * var(--curtain)) calc(5% - 5% * var(--curtain)) round
+        calc(28px - 28px * var(--curtain))
+    );
+  }
+}
+
+/* Masas de luz cálida que derivan muy despacio. Solo se anima
+   `transform`, nunca posición ni tamaño. */
+.atmosphere__glow {
+  position: absolute;
+  inset: -25%;
+  background:
+    radial-gradient(38% 44% at 74% 30%, var(--glow-warm) 0%, transparent 68%),
+    radial-gradient(30% 36% at 24% 72%, var(--glow-teal) 0%, transparent 70%),
+    radial-gradient(44% 40% at 46% 108%, var(--glow-solar) 0%, transparent 72%);
+  animation: atmosphere-drift 34s var(--ease-out-expo) infinite alternate;
+}
+
+@keyframes atmosphere-drift {
+  from {
+    transform: translate3d(-2.5%, -1.5%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(2.5%, 2%, 0) scale(1.08);
+  }
+}
+
+/* Láminas diagonales: el motivo de las referencias de liquid glass.
+   El difuminado va en los propios topes del degradado, no en un
+   `filter: blur()` a pantalla completa, que colapsa la GPU. */
+.atmosphere__slats {
+  position: absolute;
+  inset: -30%;
+  opacity: 0.5;
+  background: repeating-linear-gradient(
+    114deg,
+    rgba(255, 255, 255, 0) 0px,
+    rgba(255, 255, 255, 0.028) 42px,
+    rgba(255, 244, 232, 0.05) 88px,
+    rgba(255, 255, 255, 0.012) 140px,
+    rgba(255, 255, 255, 0) 210px
+  );
+  animation: atmosphere-slide 46s linear infinite;
+}
+
+@keyframes atmosphere-slide {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-210px, 96px, 0);
+  }
+}
+
+/* Grano: rompe el bandeado de los degradados grandes. */
+.atmosphere__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ============================================================
+   Revelado de líneas del titular
+   Un solo momento orquestado en toda la página, en la portada.
+   ============================================================ */
+
+@keyframes kv-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.36em);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.a-rise {
+  animation: kv-rise 1s var(--ease-out-expo) both;
+}
+
+.a-rise-line {
+  display: block;
+  overflow: hidden;
+}
+
+@keyframes kv-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.a-fade {
+  animation: kv-fade var(--dur-slow) var(--ease-out-expo) both;
+}
+
+/* ============================================================
+   Accesibilidad
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
@@ -244,45 +417,13 @@ body::after {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-}
 
-/* ============================================================
-   El único momento de carga orquestado del sitio: las líneas del
-   titular se asientan desde un blur cerrado mientras el sol se
-   enciende en el canvas. Ninguna otra sección anima al entrar.
-   ============================================================ */
-
-@keyframes kv-set {
-  from {
-    opacity: 0;
-    transform: translateY(0.42em);
-    filter: blur(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0);
+  .atmosphere {
+    clip-path: none;
   }
 }
 
-.a-set {
-  animation: kv-set 880ms var(--ease-out-expo) both;
-}
-
-@keyframes kv-fade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.a-fade {
-  animation: kv-fade var(--dur-slow) var(--ease-soft) both;
-}
-
-/* Guía de scroll: una línea que recorre su carril, sin flechas ni rebotes. */
+/* Guía de scroll: una luz que recorre su carril. */
 @keyframes kv-drift {
   0% {
     transform: translateY(-100%);
@@ -293,30 +434,113 @@ body::after {
   }
 }
 
-.a-drift {
-  animation: kv-drift 2.4s var(--ease-soft) infinite;
+/* Pulso que viaja por la tubería de automatización. */
+@keyframes kv-travel {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  12%,
+  78% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(var(--travel, 220px));
+    opacity: 0;
+  }
+}
+
+/* Cursor de escritura del panel de IA. */
+@keyframes kv-caret {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  50%,
+  95% {
+    opacity: 0;
+  }
+}
+
+/* Respiración muy tenue para los indicadores "en vivo". */
+@keyframes kv-breathe {
+  from {
+    opacity: 0.45;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.06);
+  }
 }
 
 /* ============================================================
-   Wordmark
-   El logotipo original va de negro a azul acero de izquierda a
-   derecha. Sobre el fondo oscuro ese extremo negro se invierte al
-   blanco cálido y se conserva el teal del final.
+   Scroller horizontal pegajoso
+   La mecánica de `.column-scroll` de tech-ish: un bloque alto,
+   un visor fijo dentro y un carril que se desplaza en horizontal
+   conforme baja el scroll. En móvil no hay ancho que repartir,
+   así que el carril se vuelve una columna normal.
    ============================================================ */
 
-.wordmark {
-  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
-  font-weight: 800;
-  letter-spacing: -0.012em;
-  background: linear-gradient(
-    92deg,
-    var(--text-primary) 0%,
-    var(--text-primary) 46%,
-    var(--accent-teal) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  /* Fallback si background-clip:text no está soportado. */
-  -webkit-text-fill-color: transparent;
+.scroller {
+  position: relative;
+}
+
+.scroller__track {
+  display: flex;
+  flex-direction: column;
+  gap: 4.5rem;
+}
+
+.scroller__panel {
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .scroller {
+    /* Un viewport para el primer panel y 0.8 por cada uno que sigue:
+       suficiente recorrido para leer sin que se haga interminable. */
+    height: calc(100svh + (var(--panels) - 1) * 80svh);
+  }
+
+  .scroller__viewport {
+    position: sticky;
+    top: 0;
+    display: flex;
+    align-items: center;
+    height: 100svh;
+    overflow: hidden;
+  }
+
+  .scroller__track {
+    flex-direction: row;
+    gap: 0;
+    width: calc(var(--panels) * 100%);
+    transform: translate3d(var(--track-x, 0%), 0, 0);
+    will-change: transform;
+  }
+
+  .scroller__panel {
+    flex: 0 0 auto;
+    width: calc(100% / var(--panels));
+    padding-inline: 0;
+  }
+}
+
+/* Riel de avance del scroller: cinco segmentos, el activo encendido. */
+.scroller__rail {
+  display: flex;
+  gap: 6px;
+}
+
+.scroller__rail span {
+  height: 2px;
+  flex: 1 1 0;
+  border-radius: 999px;
+  background: var(--border-strong);
+  transition: background-color var(--dur-slow) var(--ease-liquid);
+}
+
+.scroller__rail span[data-on="true"] {
+  background: var(--accent-from);
 }

@@ -12,7 +12,9 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-[var(--border-subtle)] bg-surface">
+    // Última carta de la baraja: relative, no sticky. Se desliza sobre
+    // la sección de contacto ya fijada y cierra el apilado.
+    <footer className="relative z-20 border-t border-[var(--border-subtle)] bg-base">
       <div className="u-shell py-16 lg:py-20">
         <div className="grid gap-12 lg:grid-cols-[minmax(0,1.2fr)_repeat(3,minmax(0,1fr))] lg:gap-10">
           <div>

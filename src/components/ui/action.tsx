@@ -3,37 +3,40 @@ import type { ComponentPropsWithoutRef, ReactNode } from "react";
 type Variant = "solar" | "ghost";
 
 /**
- * Botones y enlaces de acción.
- * Alto mínimo 48px para cumplir el objetivo táctil de 44px con holgura.
- * El texto dice qué pasa al usarlo; sin flechas decorativas pegadas.
+ * Botones y enlaces de acción, en vidrio.
+ *
+ * El primario no es un relleno naranja plano: es vidrio con un tinte
+ * cálido y un halo, de modo que parece iluminado desde dentro. Es la
+ * única pieza de la página que emite luz, así que destaca sin gritar
+ * —y es coherente con las referencias de liquid glass, donde los
+ * controles activos se tiñen en lugar de rellenarse.
+ *
+ * Alto mínimo 48px: cumple el objetivo táctil de 44px con holgura.
  */
 function classesFor(variant: Variant, extra?: string) {
   const shared = [
-    "inline-flex items-center justify-center gap-2",
-    "min-h-12 rounded-[var(--r-pill)] px-6 py-3",
+    "lg lg--refract lg-motion lg-press",
+    "inline-flex items-center justify-center gap-2.5",
+    "min-h-12 px-6 py-3",
     "text-[0.9375rem] font-semibold",
-    "transition-[transform,box-shadow,color,border-color,background-color]",
-    "duration-[var(--dur-base)] ease-[var(--ease-out-expo)]",
-    "hover:-translate-y-px active:translate-y-0",
     "disabled:pointer-events-none disabled:opacity-55",
   ];
 
   const byVariant: Record<Variant, string[]> = {
     solar: [
-      "text-base",
-      "shadow-[0_10px_30px_-12px_var(--glow-warm)]",
-      "hover:shadow-[0_16px_44px_-12px_rgba(255,122,26,0.45)]",
+      "text-solar",
+      "[--glass-tint:rgba(255,122,26,0.16)]",
+      "[--glass-edge-hi:rgba(255,201,74,0.68)]",
+      "hover:[--glass-tint:rgba(255,122,26,0.26)]",
+      "shadow-[0_10px_34px_-10px_rgba(255,122,26,0.5)]",
+      "hover:shadow-[0_16px_46px_-12px_rgba(255,122,26,0.62)]",
+      "hover:-translate-y-px",
     ],
-    ghost: [
-      "border border-[var(--border-strong)] text-ink",
-      "hover:border-teal hover:text-teal",
-    ],
+    ghost: ["text-ink", "hover:[--glass-tint:var(--glass-tint-strong)]", "hover:-translate-y-px"],
   };
 
   return [...shared, ...byVariant[variant], extra ?? ""].join(" ");
 }
-
-const solarBackground = { background: "var(--accent-gradient)" } as const;
 
 export function ActionLink({
   variant = "solar",
@@ -42,11 +45,7 @@ export function ActionLink({
   ...rest
 }: { variant?: Variant; children: ReactNode } & ComponentPropsWithoutRef<"a">) {
   return (
-    <a
-      className={classesFor(variant, className)}
-      style={variant === "solar" ? solarBackground : undefined}
-      {...rest}
-    >
+    <a className={classesFor(variant, className)} {...rest}>
       {children}
     </a>
   );
@@ -59,11 +58,7 @@ export function ActionButton({
   ...rest
 }: { variant?: Variant; children: ReactNode } & ComponentPropsWithoutRef<"button">) {
   return (
-    <button
-      className={classesFor(variant, className)}
-      style={variant === "solar" ? solarBackground : undefined}
-      {...rest}
-    >
+    <button className={classesFor(variant, className)} {...rest}>
       {children}
     </button>
   );

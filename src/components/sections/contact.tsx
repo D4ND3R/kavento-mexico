@@ -63,7 +63,12 @@ export function Contact() {
   }
 
   return (
-    <section id="contacto" className="u-section relative">
+    <section
+      id="contacto"
+      data-stack
+      className="stack stack-5 stack--alt py-24 sm:py-28"
+      style={{ ["--lit-x" as string]: "72%", ["--lit-y" as string]: "82%", ["--lit-x2" as string]: "20%", ["--lit-y2" as string]: "10%" }}
+    >
       <div className="u-shell">
         <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] lg:gap-16">
           <div>
@@ -160,12 +165,14 @@ export function Contact() {
   );
 }
 
+// Los campos también son vidrio: el formulario no puede ser la única
+// parte de la página hecha de otro material.
 const inputClasses = [
-  "w-full rounded-[var(--r-panel)] border border-[var(--border-subtle)]",
-  "bg-surface px-4 py-3 text-ink",
+  "lg lg--flush lg-motion w-full rounded-[var(--r-card)]",
+  "px-4 py-3 text-ink",
   "min-h-12 placeholder:text-faint",
-  "transition-colors duration-[var(--dur-fast)]",
-  "hover:border-[var(--border-strong)] focus:border-teal",
+  "hover:[--glass-tint:var(--glass-tint-strong)]",
+  "focus:[--glass-tint:var(--glass-tint-strong)]",
 ].join(" ");
 
 function Field({
@@ -216,18 +223,22 @@ function ChatPreview({
   empty: string;
 }) {
   return (
-    <aside className="mt-14 lg:mt-0 lg:sticky lg:top-[18vh] lg:self-start">
+    <aside className="mt-14 lg:mt-0">
       <h3 className="t-h3 text-[1.25rem]">{title}</h3>
       <p className="mt-2 text-[0.8125rem] text-faint">{hint}</p>
 
-      <div className="u-glass mt-6 rounded-[var(--r-panel)] p-5">
+      <div className="lg lg--panel lg--refract mt-6 p-5">
         <div className="flex justify-end">
           <p
-            className="max-w-[92%] rounded-2xl rounded-br-md px-4 py-3 text-[0.9375rem] leading-relaxed"
-            style={{
-              background: body ? "var(--accent-teal)" : "var(--bg-elevated)",
-              color: body ? "#08222a" : "var(--text-faint)",
-            }}
+            className="lg lg--flush max-w-[92%] rounded-2xl rounded-br-md px-4 py-3 text-[0.9375rem] leading-relaxed"
+            style={
+              body
+                ? {
+                    ["--glass-tint" as string]: "rgba(47,168,184,0.82)",
+                    color: "#04191e",
+                  }
+                : { color: "var(--text-muted)" }
+            }
           >
             {body ?? empty}
           </p>
