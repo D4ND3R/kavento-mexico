@@ -15,8 +15,16 @@
 
   /* Acento solar (el círculo del logo) */
   --accent-from: #ff7a1a;
+  --accent-mid: #f79a2a;
   --accent-to: #ffc94a;
-  --accent-gradient: linear-gradient(135deg, var(--accent-from) 0%, var(--accent-to) 100%);
+  /* 45deg: sube de naranja abajo-izquierda a amarillo arriba-derecha,
+     igual que el disco del logotipo. */
+  --accent-gradient: linear-gradient(
+    45deg,
+    var(--accent-from) 0%,
+    var(--accent-mid) 55%,
+    var(--accent-to) 100%
+  );
 
   /* Acento secundario ("México" del logo) */
   --accent-teal: #2fa8b8;
@@ -279,4 +287,28 @@ body::after {
 
 .a-drift {
   animation: kv-drift 2.4s var(--ease-soft) infinite;
+}
+
+/* ============================================================
+   Wordmark
+   El logotipo original va de negro a azul acero de izquierda a
+   derecha. Sobre el fondo oscuro ese extremo negro se invierte al
+   blanco cálido y se conserva el teal del final.
+   ============================================================ */
+
+.wordmark {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.012em;
+  background: linear-gradient(
+    92deg,
+    var(--text-primary) 0%,
+    var(--text-primary) 46%,
+    var(--accent-teal) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  /* Fallback si background-clip:text no está soportado. */
+  -webkit-text-fill-color: transparent;
 }
