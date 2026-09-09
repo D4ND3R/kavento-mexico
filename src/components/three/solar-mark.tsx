@@ -30,10 +30,13 @@ const CORE_FRAGMENT = /* glsl */ `
     vec3 n = normalize(vNormal);
     vec3 v = normalize(vView);
 
-    // Mismo eje que el degradado del logo: claro arriba-izquierda,
-    // naranja abajo-derecha.
-    float axis = clamp(0.5 + 0.72 * (n.y - n.x), 0.0, 1.0);
-    vec3 color = mix(uEmber * 0.82, uSolar, axis);
+    // Mismo eje que el disco del logotipo: naranja-rojo abajo a la
+    // izquierda, amarillo arriba a la derecha.
+    float axis = clamp(0.5 + 0.62 * (n.x + n.y), 0.0, 1.0);
+    vec3 color = mix(uEmber * 0.86, uSolar, axis);
+
+    // Bandas diagonales apenas perceptibles: las facetas del logo impreso.
+    color *= 0.955 + 0.045 * sin((n.x + n.y) * 13.0);
 
     // Borde caliente: el limbo del sol se enciende al alejarse de la cámara.
     float rim = pow(1.0 - max(dot(n, v), 0.0), 2.4);
@@ -54,7 +57,7 @@ const HALO_FRAGMENT = /* glsl */ `
     vec3 n = normalize(-vNormal);
     vec3 v = normalize(vView);
     float fresnel = pow(1.0 - max(dot(n, v), 0.0), 3.2);
-    gl_FragColor = vec4(mix(uEmber, uSolar, 0.4), fresnel * 0.85);
+    gl_FragColor = vec4(mix(uEmber, uSolar, 0.45), fresnel * 0.5);
   }
 `;
 

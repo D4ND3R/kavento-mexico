@@ -14,6 +14,8 @@ export type Palette = {
   ink: string;
   base: string;
   surface: string;
+  muted: string;
+  faint: string;
 };
 
 const FALLBACK: Palette = {
@@ -23,6 +25,8 @@ const FALLBACK: Palette = {
   ink: "#f5efe6",
   base: "#120e0a",
   surface: "#1d1712",
+  muted: "#b5a995",
+  faint: "#7d7365",
 };
 
 export function readPalette(): Palette {
@@ -39,5 +43,7 @@ export function readPalette(): Palette {
     ink: pick("--text-primary", FALLBACK.ink),
     base: pick("--bg-primary", FALLBACK.base),
     surface: pick("--bg-surface", FALLBACK.surface),
+    muted: pick("--text-muted", FALLBACK.muted),
+    faint: pick("--text-faint", FALLBACK.faint),
   };
 }
