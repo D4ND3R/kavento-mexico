@@ -295,7 +295,7 @@ body {
 /* En pantallas angostas la ventana de la cortina se abre menos: con
    el recorte de escritorio el canto cruza el contenido y se lee como
    una caja, no como un marco. */
- (max-width: 640px) {
+@media (max-width: 640px) {
   .atmosphere {
     clip-path: inset(
       calc(4% - 4% * var(--curtain)) calc(5% - 5% * var(--curtain)) round
