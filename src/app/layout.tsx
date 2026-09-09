@@ -10,7 +10,8 @@ import {
   type Locale,
 } from "@/lib/i18n/config";
 import { I18nProvider } from "@/lib/i18n/provider";
-import { siteUrl } from "@/lib/site";
+import { serviceIds } from "@/lib/services";
+import { siteUrl, socialLinks } from "@/lib/site";
 
 import "./globals.css";
 
@@ -104,8 +105,45 @@ export default async function RootLayout({
   return (
     <html lang={locale} className={`${manrope.variable} ${inter.variable}`}>
       <body>
+        {/* Datos estructurados: solo hechos comprobables, sin inventar
+            domicilio ni teléfono. */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
         <I18nProvider initialLocale={locale}>{children}</I18nProvider>
       </body>
     </html>
   );
 }
+
+/**
+ * Datos estructurados de la organización. Solo se declara lo que se
+ * puede sostener: nombre, sitio, idiomas, país y catálogo de servicios.
+ * Sin domicilio ni teléfono hasta que el cliente los proporcione.
+ */
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  name: "Soluciones Digitales Kavento México",
+  alternateName: "Kavento",
+  url: siteUrl,
+  logo: `${siteUrl}/logo-kavento.svg`,
+  image: `${siteUrl}/logo-kavento.svg`,
+  description: dictionaries.es.meta.description,
+  areaServed: { "@type": "Country", name: "México" },
+  availableLanguage: ["es-MX", "en"],
+  sameAs: socialLinks.map((social) => social.href),
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: dictionaries.es.services.title,
+    itemListElement: serviceIds.map((id) => ({
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Service",
+        name: dictionaries.es.services.items[id].title,
+        description: dictionaries.es.services.items[id].body,
+      },
+    })),
+  },
+};

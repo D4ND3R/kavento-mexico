@@ -156,21 +156,62 @@ paleta completa es editar ese bloque.
 | `--accent-teal` | `#2FA8B8` | Acento secundario, estados hover |
 | `--text-primary` | `#F5EFE6` | Texto principal |
 | `--text-muted` | `#B5A995` | Texto secundario |
+| `--text-faint` | `#9C9382` | Notas y textos terciarios |
 | `--border-subtle` | `rgba(255,255,255,.08)` | Separadores y vidrio |
 
 El naranja `#FF7A1A` **no se usa para texto pequeño** (2.9:1 sobre el fondo):
-solo para rellenos, bordes y luz. El texto secundario `#B5A995` da 7.4:1.
+solo para rellenos, bordes y luz. Sobre el fondo general, `#B5A995` da
+7.4:1 y `#9C9382` da 6.3:1; el más exigente es `#9C9382` sobre
+`--bg-elevated`, que da 5.3:1. Todo el texto pasa AA.
 
 ---
 
 ## Accesibilidad
 
-- Contraste AA en todo el texto sobre fondo oscuro.
-- Navegación completa por teclado, con anillo de foco visible.
-- `prefers-reduced-motion` respetado: se apagan las animaciones no esenciales
-  y los canvas 3D se congelan en su estado final en vez de animarse.
-- Los canvas 3D son decorativos y están marcados como tales; ninguna
-  información existe solo dentro de una animación.
+- Contraste AA en todo el texto (auditado sobre el build de producción:
+  cero fallas).
+- Objetivos táctiles de 24px o más en los 35 elementos enfocables,
+  según WCAG 2.2.
+- Navegación completa por teclado. El primer tabulable es el enlace
+  "Saltar al contenido" y el anillo de foco usa el ámbar de la marca.
+- Estructura de encabezados sin saltos (H1 → H2 → H3) y landmarks
+  `main`, `footer` y `nav` etiquetados.
+- `prefers-reduced-motion` respetado: se apagan las animaciones no
+  esenciales, no se carga GSAP y los modelos 3D se pintan una sola vez
+  en su estado ensamblado en lugar de animarse.
+- Los canvas de servicio son decorativos y están marcados como tales;
+  ninguna información existe solo dentro de una animación.
+
+## Rendimiento
+
+three.js, react-three-fiber, drei y GSAP suman más de un megabyte sin
+comprimir. Están detrás de fronteras de carga (`src/components/three/lazy.tsx`
+y un `import()` dinámico dentro de `useScrollProgress`), así que **no entran
+en el bundle inicial**: la primera carga sirve 608 KB de JavaScript sin
+comprimir en lugar de 1601 KB.
+
+Además:
+
+- Los canvas se montan cuando su sección se acerca al viewport y detienen
+  el bucle de render al salir de pantalla, sin perder el contexto WebGL.
+- El pixel ratio se limita a 2 (1.5 en pantallas táctiles).
+- La corona del sol es un único `InstancedMesh`: 200 piezas en una sola
+  llamada de dibujo.
+
+## Sobre el stack propuesto
+
+Dos desviaciones respecto del brief, ambas deliberadas:
+
+- **Framer Motion no se instaló.** El único momento de carga orquestado
+  se resuelve con animaciones CSS, que pesan cero y respetan
+  `prefers-reduced-motion` sin código extra. Agregar Framer Motion
+  sumaría peso sin habilitar nada que no esté ya cubierto.
+- **La internacionalización no usa `next-intl`.** Su enfoque enruta por
+  idioma (`/es`, `/en`), y navegar entre rutas pierde la posición de
+  scroll y desmonta los canvas 3D. El brief pedía explícitamente que el
+  conmutador no recargue ni pierda el scroll, así que se usa la
+  alternativa que el propio brief autoriza: diccionarios JSON con un
+  proveedor de cliente.
 
 ---
 

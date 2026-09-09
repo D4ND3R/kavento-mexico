@@ -96,10 +96,10 @@
   "footer": {
     "tagline": "Custom digital solutions, from Mexico.",
     "navTitle": "Sections",
+    "servicesTitle": "Services",
     "socialTitle": "Social",
     "legalTitle": "Legal",
     "privacy": "Privacy notice",
-    "privacyPlaceholder": "Placeholder: link the privacy notice",
     "socialPlaceholder": "Placeholder: add the real profiles",
     "rights": "All rights reserved.",
     "madeIn": "Made in Mexico"

@@ -1,14 +1,11 @@
 "use client";
 
-import { SolarMark } from "@/components/three/solar-mark";
-import { SceneFrame } from "@/components/three/scene-frame";
+import { HeroSun } from "@/components/three/lazy";
 import { ActionLink } from "@/components/ui/action";
-import { useCoarsePointer } from "@/lib/hooks";
 import { useTranslations } from "@/lib/i18n/provider";
 
 export function Hero() {
   const t = useTranslations();
-  const coarsePointer = useCoarsePointer();
 
   const lines = [t("hero.titleLine1"), t("hero.titleLine2"), t("hero.titleLine3")];
 
@@ -37,16 +34,7 @@ export function Hero() {
         esquina superior derecha, donde solo hay aire.
       */}
       <div className="pointer-events-none absolute -right-[16%] -top-[6%] z-0 aspect-square w-[74vw] max-w-[340px] lg:-bottom-[9%] lg:-right-[5%] lg:top-auto lg:w-[46vw] lg:max-w-[660px]">
-        <SceneFrame
-          eager
-          label={t("hero.sunAlt")}
-          className="h-full w-full"
-          cameraZ={4.4}
-          fov={44}
-          fallback={<SolarFallback />}
-        >
-          <SolarMark shardCount={coarsePointer ? 110 : 200} />
-        </SceneFrame>
+        <HeroSun label={t("hero.sunAlt")} />
 
         {/* En móvil el sol queda cerca del titular: se desvanece por abajo
             para que el texto nunca compita con el naranja. */}
@@ -109,20 +97,5 @@ export function Hero() {
         {t("hero.scrollHint")}
       </p>
     </section>
-  );
-}
-
-/** Sin WebGL el sol sigue estando: mismo degradado, en CSS. */
-function SolarFallback() {
-  return (
-    <div className="grid h-full w-full place-items-center">
-      <div
-        className="aspect-square w-[62%] rounded-full"
-        style={{
-          background: "var(--accent-gradient)",
-          boxShadow: "0 0 90px 20px var(--glow-warm)",
-        }}
-      />
-    </div>
   );
 }

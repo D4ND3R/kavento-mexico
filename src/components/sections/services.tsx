@@ -1,48 +1,31 @@
 "use client";
 
-import { useRef, useState, type ComponentType } from "react";
+import { useRef, useState } from "react";
 
-import { SceneFrame } from "@/components/three/scene-frame";
-import {
-  AiScene,
-  AutomationScene,
-  ChatScene,
-  SceneLights,
-  SoftwareScene,
-  WebScene,
-  type SceneProps,
-} from "@/components/three/service-scenes";
+import { ServiceScene } from "@/components/three/lazy";
 import { useTranslations } from "@/lib/i18n/provider";
 import {
   serviceAnchor,
   serviceBodyKey,
+  serviceIds,
   serviceTitleKey,
   type ServiceId,
 } from "@/lib/services";
 import { useScrollProgress } from "@/lib/use-scroll-progress";
 
-type ServiceConfig = {
-  id: ServiceId;
-  Scene: ComponentType<SceneProps>;
-  /** Distancia de cámara: cada modelo ocupa un volumen distinto. */
-  cameraZ: number;
-};
-
 /**
- * Los cinco frentes de trabajo. No son una secuencia —un proyecto puede
- * empezar por cualquiera— así que el riel los numera por posición, no
- * con marcadores de paso.
+ * Distancia de cámara por servicio. Sale del volumen que ocupa cada
+ * modelo cuando está completamente abierto: con FOV vertical de 42
+ * grados y encuadre cuadrado, el lado visible mide 0.767 por la
+ * distancia, así que un modelo más ancho necesita más cámara.
  */
-const SERVICES: ServiceConfig[] = [
-  // La distancia sale del volumen que ocupa cada modelo cuando está
-  // completamente abierto: con FOV vertical de 42 grados y encuadre
-  // cuadrado, el lado visible mide 0.767 por la distancia.
-  { id: "web", Scene: WebScene, cameraZ: 5.6 },
-  { id: "automation", Scene: AutomationScene, cameraZ: 7.2 },
-  { id: "software", Scene: SoftwareScene, cameraZ: 6.2 },
-  { id: "whatsapp", Scene: ChatScene, cameraZ: 6.8 },
-  { id: "ai", Scene: AiScene, cameraZ: 7.0 },
-];
+const CAMERA_Z: Record<ServiceId, number> = {
+  web: 5.6,
+  automation: 7.2,
+  software: 6.2,
+  whatsapp: 6.8,
+  ai: 7.0,
+};
 
 export function Services() {
   const t = useTranslations();
@@ -59,10 +42,10 @@ export function Services() {
         <ServiceRail active={active} />
 
         <div>
-          {SERVICES.map((service, index) => (
+          {serviceIds.map((id, index) => (
             <ServicePanel
-              key={service.id}
-              service={service}
+              key={id}
+              id={id}
               index={index}
               onActive={() => setActive(index)}
             />
@@ -75,7 +58,8 @@ export function Services() {
 
 /**
  * Índice lateral. Marca en qué servicio va la lectura y permite saltar a
- * cualquiera: es información de posición, no decoración.
+ * cualquiera: es información de posición, no decoración. Sin numerar
+ * 01/02/03 porque los servicios no son una secuencia.
  */
 function ServiceRail({ active }: { active: number }) {
   const t = useTranslations();
@@ -86,12 +70,12 @@ function ServiceRail({ active }: { active: number }) {
       className="hidden lg:sticky lg:top-[42vh] lg:block lg:self-start"
     >
       <ul className="flex flex-col gap-1">
-        {SERVICES.map((service, index) => {
+        {serviceIds.map((id, index) => {
           const current = index === active;
           return (
-            <li key={service.id}>
+            <li key={id}>
               <a
-                href={`#${serviceAnchor(service.id)}`}
+                href={`#${serviceAnchor(id)}`}
                 aria-current={current ? "true" : undefined}
                 className={[
                   "flex items-center gap-3 py-2 text-[0.8125rem] leading-tight",
@@ -109,7 +93,7 @@ function ServiceRail({ active }: { active: number }) {
                       : "var(--border-strong)",
                   }}
                 />
-                {t(serviceTitleKey(service.id))}
+                {t(serviceTitleKey(id))}
               </a>
             </li>
           );
@@ -120,11 +104,11 @@ function ServiceRail({ active }: { active: number }) {
 }
 
 function ServicePanel({
-  service,
+  id,
   index,
   onActive,
 }: {
-  service: ServiceConfig;
+  id: ServiceId;
   index: number;
   onActive: () => void;
 }) {
@@ -139,13 +123,13 @@ function ServicePanel({
   return (
     <article
       ref={panelRef}
-      id={serviceAnchor(service.id)}
+      id={serviceAnchor(id)}
       className="border-t border-[var(--border-subtle)] first:border-t-0 lg:min-h-[135vh] lg:border-t-0"
     >
       <div className="grid items-center gap-8 py-16 lg:sticky lg:top-[14vh] lg:h-[72vh] lg:grid-cols-2 lg:gap-14 lg:py-0">
         <div className={sceneFirst ? "lg:order-2" : undefined}>
-          <h3 className="t-h3">{t(serviceTitleKey(service.id))}</h3>
-          <p className="t-body mt-5 max-w-[40ch]">{t(serviceBodyKey(service.id))}</p>
+          <h3 className="t-h3">{t(serviceTitleKey(id))}</h3>
+          <p className="t-body mt-5 max-w-[40ch]">{t(serviceBodyKey(id))}</p>
         </div>
 
         <div
@@ -156,12 +140,7 @@ function ServicePanel({
             .filter(Boolean)
             .join(" ")}
         >
-          {/* Decorativo: todo lo que dice el modelo ya está en el texto
-              de al lado, así que no se anuncia a lectores de pantalla. */}
-          <SceneFrame className="h-full w-full" cameraZ={service.cameraZ}>
-            <SceneLights />
-            <service.Scene progress={progress} />
-          </SceneFrame>
+          <ServiceScene id={id} cameraZ={CAMERA_Z[id]} progress={progress} />
         </div>
       </div>
     </article>

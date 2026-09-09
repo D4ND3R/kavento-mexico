@@ -1,6 +1,6 @@
 "use client";
 
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { useCoarsePointer, useReducedMotion } from "@/lib/hooks";
@@ -87,9 +87,31 @@ export function SceneFrame({
           fallback={fallback}
           style={{ width: "100%", height: "100%" }}
         >
+          <PaintOnce />
           {children}
         </Canvas>
       ) : null}
     </div>
   );
+}
+
+/**
+ * Fuerza un cuadro después de que las escenas colocan su geometría.
+ *
+ * Con frameloop "demand" —el modo que se usa fuera de pantalla y cuando
+ * alguien pidió menos movimiento— nadie vuelve a pedir un render. Sin
+ * esto, quien navega con prefers-reduced-motion vería un canvas vacío
+ * en lugar del modelo quieto.
+ */
+function PaintOnce() {
+  const invalidate = useThree((state) => state.invalidate);
+
+  useEffect(() => {
+    // setTimeout, no rAF: corre después de los efectos de layout que
+    // escriben las matrices de las instancias.
+    const id = setTimeout(() => invalidate(), 0);
+    return () => clearTimeout(id);
+  }, [invalidate]);
+
+  return null;
 }
