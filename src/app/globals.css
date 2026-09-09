@@ -1,0 +1,231 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Kavento — Design tokens
+   Paleta oscura y cálida derivada del logo (sol ámbar→naranja,
+   "México" en teal). Ningún componente usa hex crudo: todo pasa
+   por estas variables.
+   ============================================================ */
+
+:root {
+  /* Superficies — negro café, no negro azulado */
+  --bg-primary: #120e0a;
+  --bg-surface: #1d1712;
+  --bg-elevated: #262019;
+
+  /* Acento solar (el círculo del logo) */
+  --accent-from: #ff7a1a;
+  --accent-to: #ffc94a;
+  --accent-gradient: linear-gradient(135deg, var(--accent-from) 0%, var(--accent-to) 100%);
+
+  /* Acento secundario ("México" del logo) */
+  --accent-teal: #2fa8b8;
+
+  /* Texto */
+  --text-primary: #f5efe6;
+  --text-muted: #b5a995;
+  --text-faint: #7d7365;
+
+  /* Líneas y vidrio */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --glass-bg: rgba(29, 23, 18, 0.62);
+
+  /* Luz derramada del sol del hero */
+  --glow-warm: rgba(255, 122, 26, 0.14);
+  --glow-teal: rgba(47, 168, 184, 0.12);
+
+  /* Movimiento */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 180ms;
+  --dur-base: 320ms;
+  --dur-slow: 620ms;
+
+  /* Radios — jerarquía por radio, no un radio para todo */
+  --r-panel: 12px;
+  --r-portrait: 4px;
+  --r-pill: 999px;
+
+  /* Ritmo vertical */
+  --section-y: clamp(6rem, 12vh, 11rem);
+  --gutter: clamp(1.25rem, 5vw, 5.5rem);
+  --measure: 68ch;
+}
+
+@theme inline {
+  --color-base: var(--bg-primary);
+  --color-surface: var(--bg-surface);
+  --color-elevated: var(--bg-elevated);
+  --color-ember: var(--accent-from);
+  --color-solar: var(--accent-to);
+  --color-teal: var(--accent-teal);
+  --color-ink: var(--text-primary);
+  --color-muted: var(--text-muted);
+  --color-faint: var(--text-faint);
+  --color-line: var(--border-subtle);
+  --color-line-strong: var(--border-strong);
+
+  --font-display: var(--font-manrope);
+  --font-body: var(--font-inter);
+
+  --ease-expo: var(--ease-out-expo);
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+
+* {
+  min-width: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* La navbar flotante mide ~72px; los anclas no deben quedar debajo */
+  scroll-padding-top: 6rem;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-size: 1.0625rem; /* 17px */
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* Grano: evita que el negro se lea plano/plantilla. Fijo, no scrollea. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.032;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+::selection {
+  background: var(--accent-from);
+  color: #120e0a;
+}
+
+/* Foco visible y consistente en todo lo interactivo */
+:focus-visible {
+  outline: 2px solid var(--accent-to);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ============================================================
+   Tipografía
+   Manrope para display (tracking cerrado a tamaños grandes),
+   Inter para lectura.
+   ============================================================ */
+
+.t-display {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.75rem, 7vw, 5.5rem);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.t-h2 {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(2rem, 4.5vw, 3.375rem);
+  line-height: 1.05;
+  letter-spacing: -0.028em;
+  text-wrap: balance;
+}
+
+.t-h3 {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.375rem, 2.2vw, 1.875rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.t-lead {
+  font-size: clamp(1.0625rem, 1.4vw, 1.25rem);
+  line-height: 1.55;
+  color: var(--text-muted);
+  max-width: var(--measure);
+  text-wrap: pretty;
+}
+
+.t-body {
+  color: var(--text-muted);
+  max-width: var(--measure);
+  text-wrap: pretty;
+}
+
+/* ============================================================
+   Utilidades compartidas
+   ============================================================ */
+
+.u-shell {
+  width: 100%;
+  max-width: 84rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.u-section {
+  padding-block: var(--section-y);
+  position: relative;
+}
+
+/* Vidrio Apple-like: blur + borde de 1px translúcido + realce superior */
+.u-glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid var(--border-subtle);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.06),
+    0 12px 40px -12px rgba(0, 0, 0, 0.6);
+}
+
+/* El degradado del logo como texto */
+.u-gradient-text {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Regla fina con desvanecido — separador, no caja */
+.u-rule {
+  height: 1px;
+  background: linear-gradient(90deg, var(--border-strong), transparent);
+  border: 0;
+}
+
+/* ============================================================
+   Accesibilidad — prefers-reduced-motion
+   Las animaciones no esenciales se apagan y se renderiza el
+   estado final. Los canvas 3D se congelan (frameloop="never").
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
