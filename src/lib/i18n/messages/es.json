@@ -1,0 +1,106 @@
+{
+  "meta": {
+    "title": "Kavento México — Soluciones digitales a la medida",
+    "description": "Somos un equipo mexicano de desarrollo. Construimos sitios, apps, automatizaciones, chatbots de WhatsApp e IA privada para empresas que necesitan algo hecho a su medida.",
+    "ogAlt": "Kavento México — Soluciones Digitales"
+  },
+  "nav": {
+    "skip": "Saltar al contenido",
+    "services": "Qué hacemos",
+    "team": "Nuestro equipo",
+    "contact": "Contacto",
+    "menuOpen": "Abrir menú",
+    "menuClose": "Cerrar menú",
+    "langGroup": "Idioma",
+    "langEs": "Español",
+    "langEn": "Inglés"
+  },
+  "hero": {
+    "titleLine1": "Cualquier cosa digital.",
+    "titleLine2": "Tú la imaginas,",
+    "titleLine3": "nosotros la construimos.",
+    "lead": "Somos un equipo mexicano de desarrollo. Diseñamos y construimos sitios, aplicaciones, automatizaciones, chatbots e inteligencia artificial privada para empresas que necesitan algo hecho a su medida.",
+    "ctaPrimary": "Hablemos por WhatsApp",
+    "ctaSecondary": "Ver qué hacemos",
+    "scrollHint": "Desliza para conocernos",
+    "sunAlt": "Marca solar de Kavento animada en tres dimensiones"
+  },
+  "about": {
+    "title": "¿A qué nos dedicamos?",
+    "p1": "Construimos software a la medida. Llegas con un problema —un proceso que consume horas, un sistema que ya no da, una idea que todavía no existe— y sales con algo funcionando en producción.",
+    "p2": "Trabajamos con empresas mexicanas de todos los tamaños. No revendemos plantillas ni licencias de terceros: escribimos el código, lo desplegamos y lo mantenemos contigo.",
+    "p3": "Si es digital, lo construimos.",
+    "photo1Alt": "Marcador: equipo de Kavento trabajando en la oficina",
+    "photo2Alt": "Marcador: sesión de planeación frente a un pizarrón",
+    "photo3Alt": "Marcador: detalle de código en pantalla",
+    "photoPlaceholder": "Foto por reemplazar"
+  },
+  "services": {
+    "title": "Qué construimos",
+    "lead": "Cinco frentes de trabajo. Casi siempre un proyecto toca más de uno.",
+    "railLabel": "Índice de servicios",
+    "sceneLabel": "Ilustración tridimensional del servicio, decorativa",
+    "items": {
+      "web": {
+        "title": "Desarrollo web",
+        "body": "Construimos sitios y plataformas que cargan rápido, se ven bien en cualquier pantalla y puedes actualizar sin depender de nosotros."
+      },
+      "automation": {
+        "title": "Automatización de procesos",
+        "body": "Conectamos las herramientas que ya usas para que dejen de pedirte trabajo manual. Lo que hoy toma horas, lo dejamos corriendo solo."
+      },
+      "software": {
+        "title": "Apps y software a la medida",
+        "body": "Diseñamos y desarrollamos aplicaciones web y móviles pensadas para tu operación, no para el promedio del mercado."
+      },
+      "whatsapp": {
+        "title": "Chatbots de WhatsApp",
+        "body": "Atendemos a tus clientes en el canal donde ya te escriben: cotizaciones, citas, seguimiento y soporte, respondidos al momento."
+      },
+      "ai": {
+        "title": "IA privada y modelos de lenguaje",
+        "body": "Instalamos modelos de lenguaje sobre tus propios datos y en tu propia infraestructura. Tu información no sale de tu empresa."
+      }
+    }
+  },
+  "team": {
+    "title": "Nuestro equipo",
+    "lead": "Somos un equipo pequeño y directo. Hablas con quien escribe el código.",
+    "namePlaceholder": "[Nombre del integrante]",
+    "rolePlaceholder": "[Puesto]",
+    "portraitAlt": "Marcador: retrato de integrante del equipo",
+    "note": "Marcador: reemplaza nombres, puestos y retratos en src/lib/team.ts"
+  },
+  "contact": {
+    "title": "Cuéntanos qué necesitas",
+    "lead": "Arma tu mensaje aquí y lo mandas por WhatsApp con un clic. Te respondemos el mismo día.",
+    "nameLabel": "Nombre",
+    "namePlaceholder": "Cómo te llamas",
+    "serviceLabel": "Servicio que te interesa",
+    "servicePlaceholder": "Elige uno",
+    "serviceOther": "Otra cosa / todavía no sé",
+    "messageLabel": "¿Qué necesitas?",
+    "messagePlaceholder": "Cuéntanos en una o dos líneas qué quieres resolver.",
+    "messageHint": "Entre más contexto, más rápido te damos una respuesta útil.",
+    "submit": "Enviar por WhatsApp",
+    "previewTitle": "Así llega tu mensaje",
+    "previewHint": "Se abre WhatsApp con este texto listo. Puedes editarlo antes de enviarlo.",
+    "previewEmpty": "Escribe arriba y aquí verás el mensaje que se va a enviar.",
+    "errorName": "Escribe tu nombre para saber con quién hablamos.",
+    "errorMessage": "Cuéntanos brevemente qué necesitas.",
+    "numberMissing": "Falta configurar el número de WhatsApp en NEXT_PUBLIC_WHATSAPP_NUMBER.",
+    "waTemplate": "Hola Kavento. Soy {name}. Me interesa: {service}. {message}",
+    "fabLabel": "Escríbenos por WhatsApp"
+  },
+  "footer": {
+    "tagline": "Soluciones digitales a la medida, desde México.",
+    "navTitle": "Secciones",
+    "socialTitle": "Redes",
+    "legalTitle": "Legal",
+    "privacy": "Aviso de privacidad",
+    "privacyPlaceholder": "Marcador: enlaza el aviso de privacidad",
+    "socialPlaceholder": "Marcador: agrega los perfiles reales",
+    "rights": "Todos los derechos reservados.",
+    "madeIn": "Hecho en México"
+  }
+}

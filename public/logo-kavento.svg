@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 120" width="420" height="120" role="img" aria-label="Kavento — Soluciones Digitales México">
+  <defs>
+    <linearGradient id="sun" x1="24" y1="24" x2="96" y2="96" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFC94A"/>
+      <stop offset="1" stop-color="#FF7A1A"/>
+    </linearGradient>
+  </defs>
+  <circle cx="60" cy="60" r="34" fill="url(#sun)"/>
+  <circle cx="60" cy="60" r="44" fill="none" stroke="url(#sun)" stroke-opacity="0.34" stroke-width="3"/>
+  <text x="118" y="58" font-family="Manrope, Inter, 'Segoe UI', system-ui, sans-serif" font-size="38" font-weight="800" letter-spacing="4.6" fill="#F5EFE6">KAVENTO</text>
+  <text x="120" y="84" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="16" font-style="italic" fill="#B5A995">Soluciones Digitales</text>
+  <text x="285" y="84" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="16" fill="#2FA8B8">México</text>
+</svg>
