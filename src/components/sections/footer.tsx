@@ -1,5 +1,7 @@
 "use client";
 
+import { useId } from "react";
+
 import { Logo } from "@/components/ui/logo";
 import { useI18n } from "@/lib/i18n/provider";
 import { serviceAnchor, serviceIds, serviceTitleKey } from "@/lib/services";
@@ -20,7 +22,7 @@ export function Footer() {
             </p>
             <a
               href={`mailto:${contactEmail}`}
-              className="mt-4 inline-block text-[0.9375rem] text-muted underline decoration-[var(--border-strong)] underline-offset-4 transition-colors duration-[var(--dur-fast)] hover:text-teal hover:decoration-teal"
+              className="mt-3 inline-block py-1 text-[0.9375rem] text-muted underline decoration-[var(--border-strong)] underline-offset-4 transition-colors duration-[var(--dur-fast)] hover:text-teal hover:decoration-teal"
             >
               {contactEmail}
             </a>
@@ -34,7 +36,7 @@ export function Footer() {
             ))}
           </FooterColumn>
 
-          <FooterColumn title={t("services.title")}>
+          <FooterColumn title={t("footer.servicesTitle")}>
             {serviceIds.map((id) => (
               <FooterLink key={id} href={`#${serviceAnchor(id)}`}>
                 {t(serviceTitleKey(id))}
@@ -70,8 +72,7 @@ export function Footer() {
             {/* MARCADOR: enlaza el aviso de privacidad cuando exista. */}
             <a
               href="#contacto"
-              className="transition-colors duration-[var(--dur-fast)] hover:text-muted"
-              title={t("footer.privacyPlaceholder")}
+              className="inline-block py-1 transition-colors duration-[var(--dur-fast)] hover:text-muted"
             >
               {t("footer.privacy")}
             </a>
@@ -86,6 +87,12 @@ export function Footer() {
   );
 }
 
+/**
+ * Columna del pie. El título es un párrafo, no un encabezado: tres h2
+ * más en el pie ensucian la navegación por encabezados y uno de ellos
+ * repetía el de la sección de servicios. La navegación real la da el
+ * landmark <nav>, etiquetado por ese mismo título.
+ */
 function FooterColumn({
   title,
   children,
@@ -93,14 +100,22 @@ function FooterColumn({
   title: string;
   children: React.ReactNode;
 }) {
+  const titleId = useId();
   return (
-    <nav aria-label={title}>
-      <h2 className="text-[0.9375rem] font-semibold text-ink">{title}</h2>
-      <ul className="mt-4 flex flex-col gap-2.5">{children}</ul>
+    <nav aria-labelledby={titleId}>
+      <p id={titleId} className="text-[0.9375rem] font-semibold text-ink">
+        {title}
+      </p>
+      <ul className="mt-3 flex flex-col">{children}</ul>
     </nav>
   );
 }
 
+/**
+ * Enlace del pie. El py-1.5 lleva el objetivo a 31px de alto: WCAG 2.2
+ * pide 24 como mínimo, y estos no son enlaces dentro de texto corrido
+ * —donde aplica la excepción— sino una lista de navegación.
+ */
 function FooterLink({
   children,
   ...rest
@@ -108,7 +123,7 @@ function FooterLink({
   return (
     <li>
       <a
-        className="text-[0.9375rem] text-muted transition-colors duration-[var(--dur-fast)] hover:text-ink"
+        className="inline-block py-1.5 text-[0.9375rem] text-muted transition-colors duration-[var(--dur-fast)] hover:text-ink"
         {...rest}
       >
         {children}

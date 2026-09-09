@@ -32,7 +32,10 @@
   /* Texto */
   --text-primary: #f5efe6;
   --text-muted: #b5a995;
-  --text-faint: #7d7365;
+  /* Aclarado desde #7d7365: aquel daba 3.46:1 sobre --bg-elevated y no
+     alcanzaba el AA de 4.5:1 para texto pequeño. Este da 5.3:1 ahí,
+     5.8:1 sobre --bg-surface y 6.3:1 sobre el fondo general. */
+  --text-faint: #9c9382;
 
   /* Líneas y vidrio */
   --border-subtle: rgba(255, 255, 255, 0.08);
@@ -122,9 +125,14 @@ body::after {
   color: #120e0a;
 }
 
-/* Foco visible y consistente en todo lo interactivo */
+/* Foco visible y consistente en todo lo interactivo.
+   Se escriben las propiedades largas y no el atajo `outline`: con el
+   atajo, el var() del color no sustituye y el anillo hereda
+   currentColor, que sobre texto atenuado casi no se ve. */
 :focus-visible {
-  outline: 2px solid var(--accent-to);
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--accent-to);
   outline-offset: 3px;
   border-radius: 2px;
 }

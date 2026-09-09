@@ -26,7 +26,7 @@ const FALLBACK: Palette = {
   base: "#120e0a",
   surface: "#1d1712",
   muted: "#b5a995",
-  faint: "#7d7365",
+  faint: "#9c9382",
 };
 
 export function readPalette(): Palette {
