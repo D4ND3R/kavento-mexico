@@ -11,6 +11,7 @@
     "contact": "Contact",
     "menuOpen": "Open menu",
     "menuClose": "Close menu",
+    "sectionsLabel": "Site sections",
     "langGroup": "Language",
     "langEs": "Spanish",
     "langEn": "English"
@@ -20,7 +21,7 @@
     "titleLine2": "You imagine it,",
     "titleLine3": "we build it.",
     "lead": "We are a Mexican development team. We design and build websites, applications, automations, chatbots and private artificial intelligence for companies that need something made to fit.",
-    "ctaPrimary": "Message us on WhatsApp",
+    "ctaPrimary": "Tell us what you need",
     "ctaSecondary": "See what we do",
     "scrollHint": "Scroll to meet us",
     "sunAlt": "Kavento solar mark animated in three dimensions"
@@ -39,7 +40,6 @@
     "title": "What we build",
     "lead": "Five lines of work. A project almost always touches more than one.",
     "railLabel": "Service index",
-    "sceneLabel": "Three-dimensional illustration of the service, decorative",
     "items": {
       "web": {
         "title": "Web development",

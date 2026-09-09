@@ -11,6 +11,7 @@
     "contact": "Contacto",
     "menuOpen": "Abrir menú",
     "menuClose": "Cerrar menú",
+    "sectionsLabel": "Secciones del sitio",
     "langGroup": "Idioma",
     "langEs": "Español",
     "langEn": "Inglés"
@@ -20,7 +21,7 @@
     "titleLine2": "Tú la imaginas,",
     "titleLine3": "nosotros la construimos.",
     "lead": "Somos un equipo mexicano de desarrollo. Diseñamos y construimos sitios, aplicaciones, automatizaciones, chatbots e inteligencia artificial privada para empresas que necesitan algo hecho a su medida.",
-    "ctaPrimary": "Hablemos por WhatsApp",
+    "ctaPrimary": "Cuéntanos qué necesitas",
     "ctaSecondary": "Ver qué hacemos",
     "scrollHint": "Desliza para conocernos",
     "sunAlt": "Marca solar de Kavento animada en tres dimensiones"
@@ -39,7 +40,6 @@
     "title": "Qué construimos",
     "lead": "Cinco frentes de trabajo. Casi siempre un proyecto toca más de uno.",
     "railLabel": "Índice de servicios",
-    "sceneLabel": "Ilustración tridimensional del servicio, decorativa",
     "items": {
       "web": {
         "title": "Desarrollo web",
