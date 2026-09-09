@@ -13,10 +13,13 @@ import {
   type SceneProps,
 } from "@/components/three/service-scenes";
 import { useTranslations } from "@/lib/i18n/provider";
-import type { MessageKey } from "@/lib/i18n/config";
+import {
+  serviceAnchor,
+  serviceBodyKey,
+  serviceTitleKey,
+  type ServiceId,
+} from "@/lib/services";
 import { useScrollProgress } from "@/lib/use-scroll-progress";
-
-type ServiceId = "web" | "automation" | "software" | "whatsapp" | "ai";
 
 type ServiceConfig = {
   id: ServiceId;
@@ -40,10 +43,6 @@ const SERVICES: ServiceConfig[] = [
   { id: "whatsapp", Scene: ChatScene, cameraZ: 6.8 },
   { id: "ai", Scene: AiScene, cameraZ: 7.0 },
 ];
-
-const titleKey = (id: ServiceId) => `services.items.${id}.title` as MessageKey;
-const bodyKey = (id: ServiceId) => `services.items.${id}.body` as MessageKey;
-const anchorOf = (id: ServiceId) => `servicio-${id}`;
 
 export function Services() {
   const t = useTranslations();
@@ -92,7 +91,7 @@ function ServiceRail({ active }: { active: number }) {
           return (
             <li key={service.id}>
               <a
-                href={`#${anchorOf(service.id)}`}
+                href={`#${serviceAnchor(service.id)}`}
                 aria-current={current ? "true" : undefined}
                 className={[
                   "flex items-center gap-3 py-2 text-[0.8125rem] leading-tight",
@@ -110,7 +109,7 @@ function ServiceRail({ active }: { active: number }) {
                       : "var(--border-strong)",
                   }}
                 />
-                {t(titleKey(service.id))}
+                {t(serviceTitleKey(service.id))}
               </a>
             </li>
           );
@@ -140,13 +139,13 @@ function ServicePanel({
   return (
     <article
       ref={panelRef}
-      id={anchorOf(service.id)}
+      id={serviceAnchor(service.id)}
       className="border-t border-[var(--border-subtle)] first:border-t-0 lg:min-h-[135vh] lg:border-t-0"
     >
       <div className="grid items-center gap-8 py-16 lg:sticky lg:top-[14vh] lg:h-[72vh] lg:grid-cols-2 lg:gap-14 lg:py-0">
         <div className={sceneFirst ? "lg:order-2" : undefined}>
-          <h3 className="t-h3">{t(titleKey(service.id))}</h3>
-          <p className="t-body mt-5 max-w-[40ch]">{t(bodyKey(service.id))}</p>
+          <h3 className="t-h3">{t(serviceTitleKey(service.id))}</h3>
+          <p className="t-body mt-5 max-w-[40ch]">{t(serviceBodyKey(service.id))}</p>
         </div>
 
         <div

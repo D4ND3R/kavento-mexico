@@ -90,6 +90,7 @@
     "errorMessage": "Tell us briefly what you need.",
     "numberMissing": "The WhatsApp number is not set in NEXT_PUBLIC_WHATSAPP_NUMBER.",
     "waTemplate": "Hi Kavento. I am {name}. I am interested in: {service}. {message}",
+    "waGreeting": "Hi Kavento, I would like to talk about a project.",
     "fabLabel": "Message us on WhatsApp"
   },
   "footer": {

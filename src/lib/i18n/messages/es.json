@@ -90,6 +90,7 @@
     "errorMessage": "Cuéntanos brevemente qué necesitas.",
     "numberMissing": "Falta configurar el número de WhatsApp en NEXT_PUBLIC_WHATSAPP_NUMBER.",
     "waTemplate": "Hola Kavento. Soy {name}. Me interesa: {service}. {message}",
+    "waGreeting": "Hola Kavento, me gustaría platicar sobre un proyecto.",
     "fabLabel": "Escríbenos por WhatsApp"
   },
   "footer": {
