@@ -14,12 +14,14 @@
     "sectionsLabel": "Secciones del sitio",
     "langGroup": "Idioma",
     "langEs": "Español",
-    "langEn": "Inglés"
+    "langEn": "Inglés",
+    "status": "Recibiendo proyectos",
+    "prev": "Anterior",
+    "next": "Siguiente"
   },
   "hero": {
-    "kicker": "Cualquier cosa digital.",
-    "titleLine1": "Tú lo imaginas.",
-    "titleLine2": "Nosotros lo construimos.",
+    "kicker": "Soluciones Digitales Kavento México",
+    "titleLine1": "Construimos tecnología que",
     "lead": "Somos un equipo mexicano. Construimos software a la medida, de punta a punta.",
     "ctaPrimary": "Cuéntanos qué necesitas",
     "ctaSecondary": "Ver qué hacemos",
@@ -32,7 +34,11 @@
     "cardContactNote": "Te respondemos el mismo día.",
     "cardTeamLabel": "Quién lo hace",
     "cardTeamValue": "Equipo mexicano",
-    "cardTeamNote": "Hablas directo con quien escribe el código."
+    "cardTeamNote": "Hablas directo con quien escribe el código.",
+    "word1": "Escala",
+    "word2": "Automatiza",
+    "word3": "Vende",
+    "word4": "Aguanta"
   },
   "about": {
     "title": "¿A qué nos dedicamos?",
@@ -42,7 +48,8 @@
     "photo1Alt": "Marcador: equipo de Kavento trabajando en la oficina",
     "photo2Alt": "Marcador: sesión de planeación frente a un pizarrón",
     "photo3Alt": "Marcador: detalle de código en pantalla",
-    "photoPlaceholder": "Foto por reemplazar"
+    "photoPlaceholder": "Foto por reemplazar",
+    "eyebrow": "Nosotros"
   },
   "services": {
     "title": "Qué construimos",
@@ -69,7 +76,9 @@
         "title": "IA privada y modelos de lenguaje",
         "body": "Instalamos modelos de lenguaje sobre tus propios datos y en tu propia infraestructura. Tu información no sale de tu empresa."
       }
-    }
+    },
+    "eyebrow": "Trabajos — Lo que construimos",
+    "hint": "Arrastra o usa las flechas"
   },
   "team": {
     "title": "Nuestro equipo",
@@ -77,7 +86,8 @@
     "namePlaceholder": "[Nombre del integrante]",
     "rolePlaceholder": "[Puesto]",
     "portraitAlt": "Marcador: retrato de integrante del equipo",
-    "note": "Marcador: reemplaza nombres, puestos y retratos en src/lib/team.ts"
+    "note": "Marcador: reemplaza nombres, puestos y retratos en src/lib/team.ts",
+    "eyebrow": "Equipo"
   },
   "contact": {
     "title": "Cuéntanos qué necesitas",
@@ -99,7 +109,8 @@
     "numberMissing": "Falta configurar el número de WhatsApp en NEXT_PUBLIC_WHATSAPP_NUMBER.",
     "waTemplate": "Hola Kavento. Soy {name}. Me interesa: {service}. {message}",
     "waGreeting": "Hola Kavento, me gustaría platicar sobre un proyecto.",
-    "fabLabel": "Escríbenos por WhatsApp"
+    "fabLabel": "Escríbenos por WhatsApp",
+    "eyebrow": "Contacto"
   },
   "footer": {
     "tagline": "Soluciones digitales a la medida, desde México.",
@@ -130,5 +141,14 @@
     "aiPrompt": "¿Cuánto vendimos en Puebla el mes pasado?",
     "aiAnswer": "1,284,500 MXN en 312 pedidos.",
     "aiPrivacy": "Tus datos no salen de tu servidor"
+  },
+  "reviews": {
+    "eyebrow": "Reseñas",
+    "title": "En sus palabras",
+    "lead": "Marcador: aquí van reseñas reales de clientes. Las de abajo son de relleno y deben reemplazarse antes de publicar.",
+    "note": "Marcador: reemplaza estas reseñas en src/lib/reviews.ts",
+    "quotePlaceholder": "[Texto de la reseña. Pide al cliente dos o tres frases sobre qué le resolvimos, en cuánto tiempo y qué cambió después.]",
+    "namePlaceholder": "[Nombre del cliente]",
+    "rolePlaceholder": "[Puesto · Empresa]"
   }
 }

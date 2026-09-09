@@ -3,36 +3,46 @@
 import { useEffect } from "react";
 
 /* ==================================================================
-   MOTOR DE APILADO ("baraja de cartas") Y CORTINAS
+   MOTOR DE SCROLL
 
-   Puerto del sistema del portafolio de Leonardo Díaz Delgado, con la
-   misma arquitectura:
+   Un solo requestAnimationFrame para toda la página, con la fase de
+   lectura (getBoundingClientRect) separada de la de escritura (style),
+   para no provocar layout thrashing. Arquitectura del portafolio de
+   Leonardo Díaz Delgado.
 
-   - Las secciones se fijan con `position: sticky` y una escalera de
-     z-index creciente, así cada una se desliza encima de la anterior.
-   - `updatePins()` calcula el `top` de fijado: si la sección es más
-     alta que el viewport se ancla en `vh - alto` (negativo), de modo
-     que el visitante alcance a leerla completa antes de que quede
-     clavada y la siguiente empiece a taparla.
-   - A cada sección se le inyecta una cortina negra cuya opacidad sube
-     conforme la sección siguiente la cubre. Sin esto, la carta de
-     abajo se ve igual de brillante que la de encima y el apilado no
-     se lee.
-   - Todo el trabajo por cuadro pasa por un solo rAF que separa la fase
-     de lectura (getBoundingClientRect) de la de escritura (style),
-     para no provocar layout thrashing.
+   De aquí salen cinco cosas:
 
-   Se evita `filter: blur()` sobre contenedores del tamaño de la
-   pantalla: colapsa la GPU. Las cortinas son divs con opacidad plana.
+   1. Apilado    secciones con position:sticky y z-index creciente;
+                 updatePins() ancla en `vh - alto` las que no caben.
+   2. Cortinas   velo negro por sección, cuya opacidad sube conforme la
+                 siguiente la cubre.
+   3. Navbar     se colapsa al bajar y se abre al subir o al detenerse.
+   4. Abanico    --spread, que abre las tarjetas de reseñas.
+   5. Cortina    --curtain, que abre el campo de fondo del hero.
    ================================================================== */
 
-/** Suavizado tipo smoothstep, igual que el original. */
+/** Suavizado tipo smoothstep. */
 function ease(t: number): number {
   const c = Math.max(0, Math.min(1, t));
   return c * c * (3 - 2 * c);
 }
 
-const SHADE_MAX = 0.5;
+/** Opacidad máxima del velo. */
+const SHADE_MAX = 0.55;
+
+/**
+ * La cortina no arranca hasta que la sección de encima ha subido un
+ * 22% de la pantalla, y tarda 1.6 pantallas en cerrar del todo. Antes
+ * cubría en una sola pantalla y el cruce pasaba demasiado rápido para
+ * leerse.
+ */
+const CURTAIN_START = 0.22;
+const CURTAIN_SPAN = 1.6;
+
+/** Umbral y espera de la navbar, del portafolio. */
+const NAV_DELTA = 8;
+const NAV_IDLE = 700;
+const NAV_TOP = 60;
 
 export function useScrollStack() {
   useEffect(() => {
@@ -44,6 +54,9 @@ export function useScrollStack() {
     const prefersReduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
+
+    const navPill = document.querySelector<HTMLElement>("[data-nav-pill]");
+    const fans = Array.from(document.querySelectorAll<HTMLElement>("[data-fan]"));
 
     /* --- cortinas ------------------------------------------------ */
     // La última sección no necesita cortina: nada la cubre.
@@ -60,53 +73,116 @@ export function useScrollStack() {
     function updatePins() {
       const vh = window.innerHeight;
       for (const section of sections) {
-        // La primera cae siempre a top:0; las demás pueden ser más
-        // altas que la pantalla y se anclan por su base.
         section.style.top = `${Math.min(0, vh - section.offsetHeight)}px`;
       }
     }
 
+    /* --- entradas escalonadas ------------------------------------ */
+    // Van por IntersectionObserver y no por el bucle: solo cambian una
+    // vez y no tiene sentido recalcularlas en cada cuadro.
+    const staggerNodes = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-stagger]"),
+    );
+
+    let observerFired = false;
+
+    const staggerObserver = new IntersectionObserver(
+      (entries) => {
+        observerFired = true;
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            (entry.target as HTMLElement).dataset.inview = "true";
+            staggerObserver.unobserve(entry.target);
+          }
+        }
+      },
+      { rootMargin: "0px 0px -12% 0px", threshold: 0.15 },
+    );
+
+    for (const node of staggerNodes) staggerObserver.observe(node);
+
+    // Red de seguridad: si el observador no entrega ni una sola vez —lo
+    // que pasa en navegadores que no lo componen— el contenido quedaría
+    // invisible para siempre. Pasados dos segundos sin señales, se
+    // revela todo. Solo actúa cuando el observador está roto: si
+    // funcionó, no toca nada.
+    const rescueTimer = window.setTimeout(() => {
+      if (observerFired) return;
+      for (const node of staggerNodes) node.dataset.inview = "true";
+    }, 2000);
+
     /* --- bucle único --------------------------------------------- */
     let queued = false;
     let disposed = false;
+    let lastY = window.scrollY;
+    let idleTimer = 0;
 
-    // Fase de lectura: se recogen todas las medidas antes de escribir.
     const tops = new Array<number>(sections.length);
+
+    function expandNav() {
+      if (navPill) navPill.dataset.shrunk = "false";
+    }
 
     function frame() {
       queued = false;
       if (disposed) return;
 
       const vh = window.innerHeight;
+      const y = window.scrollY;
 
       // LECTURA
       for (let i = 0; i < sections.length; i += 1) {
         tops[i] = sections[i].getBoundingClientRect().top;
       }
+      const fanTops = fans.map((fan) => fan.getBoundingClientRect().top);
 
       // ESCRITURA
       for (let i = 0; i < shades.length; i += 1) {
-        // Cuánto ha subido la sección de encima por la pantalla.
-        const progress = ease((vh - tops[i + 1]) / vh);
+        const entered = (vh - tops[i + 1]) / vh;
+        const progress = ease((entered - CURTAIN_START) / CURTAIN_SPAN);
         shades[i].style.opacity = (SHADE_MAX * progress).toFixed(3);
       }
 
-      // El hero retrocede mientras lo tapan: no se queda plano detrás.
+      // El hero retrocede mientras lo tapan.
       const recede = sections[0].querySelector<HTMLElement>("[data-recede]");
       if (recede) {
         const height = sections[0].offsetHeight || vh;
-        const p = Math.min(Math.max(-tops[0] / (height * 0.8), 0), 1);
+        const p = Math.min(Math.max(-tops[0] / (height * 0.85), 0), 1);
         const eased = 1 - Math.pow(1 - p, 3);
         recede.style.transform = `scale(${(1 - eased * 0.1).toFixed(4)})`;
         recede.style.opacity = (1 - eased * 0.35).toFixed(3);
       }
 
-      // Avance de la cortina del campo de fondo, expuesto a CSS.
-      const curtain = Math.min(Math.max(-tops[0] / (window.innerHeight || 1), 0), 1);
+      // Abanico de reseñas.
+      for (let i = 0; i < fans.length; i += 1) {
+        const spread = ease((vh * 0.85 - fanTops[i]) / (vh * 0.7));
+        fans[i].style.setProperty("--spread", spread.toFixed(3));
+      }
+
+      // Campo de fondo del hero.
+      const curtain = Math.min(Math.max(-tops[0] / vh, 0), 1);
       document.documentElement.style.setProperty(
         "--curtain",
         curtain.toFixed(4),
       );
+
+      // Navbar: se colapsa al bajar, se abre al subir, al detenerse o
+      // al volver cerca del tope.
+      if (navPill) {
+        const diff = y - lastY;
+        if (y < NAV_TOP) {
+          expandNav();
+        } else if (diff > NAV_DELTA) {
+          navPill.dataset.shrunk = "true";
+        } else if (diff < -NAV_DELTA) {
+          expandNav();
+        }
+
+        window.clearTimeout(idleTimer);
+        idleTimer = window.setTimeout(expandNav, NAV_IDLE);
+      }
+
+      lastY = y;
     }
 
     function schedule() {
@@ -123,13 +199,16 @@ export function useScrollStack() {
     updatePins();
 
     if (prefersReduced) {
-      // Sin movimiento: se deja el apilado (es estructura, no adorno)
-      // pero las cortinas y el retroceso se quedan en su estado final.
+      // Se conserva el apilado (es estructura, no adorno) pero las
+      // cortinas y el abanico se quedan en su estado final.
       document.documentElement.style.setProperty("--curtain", "1");
+      for (const fan of fans) fan.style.setProperty("--spread", "1");
       window.addEventListener("resize", updatePins, { passive: true });
       return () => {
+        window.clearTimeout(rescueTimer);
         window.removeEventListener("resize", updatePins);
-        shades.forEach((s) => s.remove());
+        staggerObserver.disconnect();
+        shades.forEach((shade) => shade.remove());
       };
     }
 
@@ -142,9 +221,12 @@ export function useScrollStack() {
 
     return () => {
       disposed = true;
+      window.clearTimeout(idleTimer);
+      window.clearTimeout(rescueTimer);
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("load", onResize);
+      staggerObserver.disconnect();
       shades.forEach((shade) => shade.remove());
       for (const section of sections) section.style.top = "";
     };

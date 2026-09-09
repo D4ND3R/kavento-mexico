@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Figtree, Inter } from "next/font/google";
+import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import { cookies } from "next/headers";
 
 import {
@@ -18,15 +18,21 @@ import { siteUrl, socialLinks } from "@/lib/site";
 import "./globals.css";
 
 /**
- * Display: Figtree. Geométrica-humanista, de la misma familia visual
- * que la Google Sans Flex de tech-ish. Se usa en peso 500 a tamaños
- * grandes: el peso 800 a 80px es justo lo que hace que una portada se
- * lea como plantilla generada.
+ * Las tres fuentes del portafolio de Leonardo Díaz Delgado:
+ * Space Grotesk para display, Inter para lectura y JetBrains Mono
+ * para las etiquetas de sección.
  */
-const figtree = Figtree({
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-figtree",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-display-family",
+  display: "swap",
+});
+
+const jetbrains = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-mono-family",
   display: "swap",
 });
 
@@ -110,7 +116,7 @@ export default async function RootLayout({
   const locale: Locale = isLocale(stored) ? stored : defaultLocale;
 
   return (
-    <html lang={locale} className={`${figtree.variable} ${inter.variable}`}>
+    <html lang={locale} className={`${spaceGrotesk.variable} ${jetbrains.variable} ${inter.variable}`}>
       <body>
         {/* Datos estructurados: solo hechos comprobables, sin inventar
             domicilio ni teléfono. */}

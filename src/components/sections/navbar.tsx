@@ -12,14 +12,17 @@ type Blob = { left: number; width: number; visible: boolean };
 const HIDDEN: Blob = { left: 0, width: 0, visible: false };
 
 /**
- * Navbar de vidrio.
+ * Navbar dinámica, con la lógica del portafolio.
  *
- * El indicador que sigue al cursor son DOS gotas: una rápida que va
- * pegada al cursor y otra lenta que se queda atrás. Bajo el filtro
- * `#lg-goo` las dos se unen por un cuello mientras se separan, así que
- * el indicador se estira como líquido en lugar de deslizarse como un
- * rectángulo. Cuando llegan al mismo sitio, el cuello desaparece y
- * vuelve a ser una sola pastilla.
+ * La pastilla central se colapsa al bajar y se vuelve a abrir al subir,
+ * al detenerse 700 ms o al volver cerca del tope. El estado lo escribe
+ * el motor de scroll en `data-shrunk`; aquí solo se declara la forma.
+ *
+ * El indicador que sigue al cursor son DOS gotas: una rápida y una
+ * lenta. Bajo el filtro `#lg-goo` quedan unidas por un cuello mientras
+ * se separan, así que se estira como líquido en vez de deslizarse. El
+ * filtro va solo en la capa de gotas: un `filter` afecta a todo su
+ * subárbol y borraría el texto de los enlaces.
  */
 export function Navbar() {
   const t = useTranslations();
@@ -27,13 +30,10 @@ export function Navbar() {
   const [blob, setBlob] = useState<Blob>(HIDDEN);
   const listRef = useRef<HTMLUListElement>(null);
 
-  const follow = useCallback((event: React.PointerEvent<HTMLAnchorElement>) => {
-    const link = event.currentTarget;
-    const list = listRef.current;
-    if (!list) return;
+  const follow = useCallback((element: HTMLAnchorElement) => {
     setBlob({
-      left: link.offsetLeft,
-      width: link.offsetWidth,
+      left: element.offsetLeft,
+      width: element.offsetWidth,
       visible: true,
     });
   }, []);
@@ -63,83 +63,79 @@ export function Navbar() {
           <a
             href="#top"
             aria-label="Kavento México"
-            className="lg lg--refract lg-motion lg-press flex items-center gap-2.5 px-3.5 py-2.5"
+            className="lg lg--pill lg--refract lg-motion lg-press flex items-center gap-2.5 px-3.5 py-2.5"
           >
             <Logo />
           </a>
 
-          <nav
-            className="lg lg--refract lg-motion hidden p-1.5 md:block"
-            aria-label={t("nav.sectionsLabel")}
+          {/* Pastilla central: estado + enlaces colapsables. */}
+          <div
+            data-nav-pill
+            data-shrunk="false"
+            className="lg lg--pill lg--refract lg--open hidden items-center gap-3 py-1.5 pl-4 pr-2 md:flex"
           >
-            <ul
-              ref={listRef}
-              onPointerLeave={release}
-              className="relative flex items-center"
-            >
-              {/*
-                Capa de gotas. El filtro va SOLO aquí: `filter` afecta a
-                todo el subárbol, así que si envolviera también a los
-                enlaces les borraría el texto.
-              */}
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0"
-                style={{ filter: "url(#lg-goo)" }}
-              >
-                {/* Gota lenta: se queda atrás y forma el cuello. */}
-                <span
-                  className="absolute inset-y-0 rounded-[var(--r-pill)] bg-[rgba(255,244,232,0.18)]"
-                  style={{
-                    left: blob.left,
-                    width: blob.width,
-                    opacity: blob.visible ? 1 : 0,
-                    transition:
-                      "left 900ms var(--ease-liquid), width 900ms var(--ease-liquid), opacity 340ms linear",
-                  }}
-                />
-                {/* Gota rápida: llega primero. */}
-                <span
-                  className="absolute inset-y-0 rounded-[var(--r-pill)] bg-[rgba(255,244,232,0.18)]"
-                  style={{
-                    left: blob.left,
-                    width: blob.width,
-                    opacity: blob.visible ? 1 : 0,
-                    transition:
-                      "left 420ms var(--ease-liquid), width 420ms var(--ease-liquid), opacity 200ms linear",
-                  }}
-                />
-              </span>
+            <span className="flex shrink-0 items-center gap-2 whitespace-nowrap text-[0.8125rem] text-muted">
+              <span className="nav-dot" aria-hidden="true" />
+              {t("nav.status")}
+            </span>
 
-              {navSections.map((section) => (
-                <li key={section.id}>
-                  <a
-                    href={`#${section.id}`}
-                    onPointerEnter={follow}
-                    onFocus={(event) => {
-                      const link = event.currentTarget;
-                      setBlob({
-                        left: link.offsetLeft,
-                        width: link.offsetWidth,
-                        visible: true,
-                      });
+            <nav aria-label={t("nav.sectionsLabel")}>
+              <ul
+                ref={listRef}
+                onPointerLeave={release}
+                className="nav-links relative"
+              >
+                <span
+                  aria-hidden="true"
+                  className="lg-merge pointer-events-none absolute inset-0"
+                >
+                  {/* Gota lenta: se queda atrás y forma el cuello. */}
+                  <span
+                    className="absolute inset-y-0 rounded-[var(--r-pill)] bg-[rgba(255,244,232,0.2)]"
+                    style={{
+                      left: blob.left,
+                      width: blob.width,
+                      opacity: blob.visible ? 1 : 0,
+                      transition:
+                        "left 900ms var(--ease-liquid), width 900ms var(--ease-liquid), opacity 340ms linear",
                     }}
-                    onBlur={release}
-                    className="relative block rounded-[var(--r-pill)] px-4 py-2 text-[0.9375rem] text-muted transition-colors duration-[var(--dur-base)] hover:text-ink"
-                  >
-                    {t(section.key)}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
+                  />
+                  {/* Gota rápida: llega primero. */}
+                  <span
+                    className="absolute inset-y-0 rounded-[var(--r-pill)] bg-[rgba(255,244,232,0.2)]"
+                    style={{
+                      left: blob.left,
+                      width: blob.width,
+                      opacity: blob.visible ? 1 : 0,
+                      transition:
+                        "left 420ms var(--ease-liquid), width 420ms var(--ease-liquid), opacity 200ms linear",
+                    }}
+                  />
+                </span>
+
+                {navSections.map((section) => (
+                  <li key={section.id}>
+                    <a
+                      href={`#${section.id}`}
+                      onPointerEnter={(event) => follow(event.currentTarget)}
+                      onFocus={(event) => follow(event.currentTarget)}
+                      onBlur={release}
+                      className="relative block whitespace-nowrap rounded-[var(--r-pill)] px-3.5 py-2 text-[0.8125rem] text-muted transition-colors duration-[var(--dur-base)] hover:text-ink"
+                    >
+                      {t(section.key)}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
 
           <div className="flex items-center gap-2">
             <LanguageToggle />
 
             <button
               type="button"
-              className="lg lg-motion lg-press flex size-12 items-center justify-center text-muted transition-colors duration-[var(--dur-fast)] hover:text-ink md:hidden"
+              className="lg lg--pill lg-motion lg-press flex size-12 items-center justify-center text-muted transition-colors duration-[var(--dur-fast)] hover:text-ink md:hidden"
               aria-expanded={menuOpen}
               aria-controls="menu-movil"
               aria-label={menuOpen ? t("nav.menuClose") : t("nav.menuOpen")}

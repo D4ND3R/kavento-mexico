@@ -1,25 +1,31 @@
 "use client";
 
 import { ActionLink } from "@/components/ui/action";
+import { RollingWord, SplitText } from "@/components/ui/letters";
 import { WhatsappGlyph } from "@/components/ui/whatsapp-glyph";
-import { useTranslations } from "@/lib/i18n/provider";
 import type { MessageKey } from "@/lib/i18n/config";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Portada.
  *
- * La composición viene de tech-ish.org: dos líneas de titular enormes
- * a peso medio, la segunda desplazada a la derecha, el párrafo metido
- * en el hueco que deja la primera, y la llamada a la acción abajo a la
- * izquierda cruzando la altura de la segunda línea. El aire asimétrico
- * es el que hace el trabajo; no hay adorno que rellenar.
+ * Titular del portafolio: una frase fija y una palabra clave que va
+ * cambiando sola en un rodillo, con la misma cadencia del original
+ * (2400 ms de espera, 450 ms de viaje, curva con rebote). Cada letra es
+ * su propia caja y reacciona al cursor por separado.
  *
- * Debajo, la fila de tres tarjetas hermanas: al apuntar a una, las
- * otras se apagan. Una es de vidrio, otra casi negra y otra teal —el
- * mismo contraste de materiales de la referencia.
+ * Debajo, la fila de tres tarjetas hermanas de tech-ish: al apuntar a
+ * una, las otras se apagan.
  */
 export function Hero() {
   const t = useTranslations();
+
+  const words = [
+    t("hero.word1"),
+    t("hero.word2"),
+    t("hero.word3"),
+    t("hero.word4"),
+  ];
 
   return (
     <section
@@ -32,27 +38,27 @@ export function Hero() {
           {t("hero.kicker")}
         </p>
 
-        {/*
-          El titular ocupa el ancho completo y el párrafo se mete en el
-          hueco que deja la primera línea: los dos viven en la misma
-          celda de la retícula (fila 1), y como la línea 1 es corta y el
-          párrafo solo mide dos renglones, nunca se cruzan.
-        */}
-        <div className="mt-5 lg:grid lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-12">
+        <div className="mt-6 lg:grid lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-12">
           <h1 className="t-display lg:col-span-2 lg:col-start-1 lg:row-start-1">
             <span className="a-rise-line">
-              <span className="a-rise block" style={{ animationDelay: "140ms" }}>
-                {t("hero.titleLine1")}
+              <span
+                className="h-line a-rise block"
+                style={{ animationDelay: "140ms" }}
+              >
+                <SplitText text={t("hero.titleLine1")} />
               </span>
             </span>
-            <span className="a-rise-line lg:pl-[14%]">
-              <span className="a-rise block" style={{ animationDelay: "260ms" }}>
-                {t("hero.titleLine2")}
+            <span className="a-rise-line">
+              <span
+                className="a-rise block lg:pl-[10%]"
+                style={{ animationDelay: "260ms" }}
+              >
+                <RollingWord words={words} />
               </span>
             </span>
           </h1>
 
-          {/* El párrafo vive en el hueco que deja el titular, no debajo. */}
+          {/* El párrafo se mete en el hueco que deja la primera línea. */}
           <p
             className="t-lead a-fade mt-8 max-w-[38ch] lg:col-start-2 lg:row-start-1 lg:mt-3 lg:self-start"
             style={{ animationDelay: "420ms" }}
@@ -124,15 +130,18 @@ const CARDS: CardSpec[] = [
 ];
 
 /**
- * Grupo de hermanos: apuntar a una tarjeta atenúa a las demás. El
- * grupo entero baja de opacidad y la que tiene el cursor la recupera,
- * así el foco se resuelve con dos reglas y sin JavaScript.
+ * Grupo de hermanos: apuntar a una tarjeta atenúa a las demás. El grupo
+ * entero baja de opacidad y la que tiene el cursor la recupera, así el
+ * foco se resuelve con dos reglas y sin JavaScript.
  */
 function SiblingCards() {
   const t = useTranslations();
 
   return (
-    <ul className="grid gap-3 sm:grid-cols-3 [&:hover>li]:opacity-45">
+    <ul
+      data-stagger
+      className="a-stagger grid gap-3 sm:grid-cols-3 [&:hover>li]:opacity-45"
+    >
       {CARDS.map((card) => (
         <li
           key={card.href}
@@ -141,11 +150,11 @@ function SiblingCards() {
           <a
             href={card.href}
             className={[
-              "lg lg-motion lg-press flex h-full flex-col justify-between gap-8 p-5 sm:p-6",
-              "rounded-[var(--r-card)] hover:-translate-y-1",
-              card.tone === "ink" ? "[--glass-tint:rgba(10,8,6,0.72)]" : "",
+              "lg lg-motion lg-press lg-hover flex h-full flex-col justify-between gap-8 p-5 sm:p-6",
+              "[--glass-radius:var(--r-card)]",
+              card.tone === "ink" ? "[--glass-bg:rgba(10,8,6,0.6)]" : "",
               card.tone === "teal"
-                ? "[--glass-tint:rgba(47,168,184,0.22)] [--glass-edge-hi:rgba(160,235,245,0.6)]"
+                ? "[--glass-bg:rgba(47,168,184,0.2)] [--glass-bloom:rgba(160,235,245,0.22)]"
                 : "",
               card.tone === "glass" ? "lg--refract" : "",
             ].join(" ")}
@@ -162,7 +171,7 @@ function SiblingCards() {
             <span>
               <span
                 className="block text-[1.75rem] leading-none text-ink"
-                style={{ fontFamily: "var(--font-display)", fontWeight: 500 }}
+                style={{ fontFamily: "var(--font-display)", fontWeight: 700 }}
               >
                 {t(card.value)}
               </span>

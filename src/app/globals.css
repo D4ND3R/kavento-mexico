@@ -3,8 +3,6 @@
 
 /* ============================================================
    Kavento — Design tokens
-   La paleta oscura y cálida se conserva íntegra: es el fondo
-   sobre el que se apoya todo el vidrio.
    ============================================================ */
 
 :root {
@@ -12,6 +10,13 @@
   --bg-primary: #120e0a;
   --bg-surface: #1d1712;
   --bg-elevated: #262019;
+
+  /* Superficie verde de la sección de reseñas. Es el único acento
+     frío grande de la página, igual que la carta verde entre las
+     oscuras de tech-ish. */
+  --surface-green: #12200f;
+  --accent-green: #70b494;
+  --glow-green: rgba(112, 180, 148, 0.22);
 
   /* Acento solar (el disco del logo) */
   --accent-from: #ff7a1a;
@@ -26,15 +31,15 @@
 
   /* Acento secundario ("México" del logo) */
   --accent-teal: #2fa8b8;
-  /* Variante clara del teal. El teal de marca da 4.24:1 sobre el
-     vidrio claro y no alcanza el AA de 4.5:1 para texto pequeño;
-     este da 6.1:1. Se usa solo para texto chico sobre vidrio. */
   --accent-teal-hi: #5fc8d8;
 
   /* Texto */
   --text-primary: #f5efe6;
   --text-muted: #b5a995;
   --text-faint: #9c9382;
+  /* Para texto pequeño que cae SOBRE vidrio: el vidrio sube el fondo
+     efectivo y --text-muted se queda en 4.4:1. Este da 6.2:1. */
+  --text-muted-hi: #d3c8b6;
 
   /* Líneas */
   --border-subtle: rgba(255, 255, 255, 0.08);
@@ -51,37 +56,44 @@
   --dur-base: 320ms;
   --dur-slow: 620ms;
 
-  /* Radios — jerarquía por radio */
+  /* Radios */
   --r-panel: 20px;
   --r-card: 12px;
   --r-portrait: 4px;
   --r-pill: 999px;
 
-  /* Ritmo vertical */
-  --section-y: clamp(5.5rem, 11vh, 10rem);
+  /* Ritmo vertical. La sección de trabajos necesita mucho más aire
+     que el resto, por eso tiene su propio token. */
+  --section-y: clamp(6rem, 13vh, 12rem);
+  --section-y-wide: clamp(9rem, 20vh, 18rem);
   --gutter: clamp(1.25rem, 5vw, 5rem);
   --measure: 64ch;
 
-  /* Avance de la cortina del campo de fondo (0→1). Lo escribe el
-     motor de apilado en cada cuadro. */
+  /* Avance de la cortina del campo de fondo (0→1). */
   --curtain: 0;
+  /* Apertura en abanico de las tarjetas de reseña (0→1). */
+  --spread: 0;
 }
 
 @theme inline {
   --color-base: var(--bg-primary);
   --color-surface: var(--bg-surface);
   --color-elevated: var(--bg-elevated);
+  --color-forest: var(--surface-green);
   --color-ember: var(--accent-from);
   --color-solar: var(--accent-to);
   --color-teal: var(--accent-teal);
   --color-teal-hi: var(--accent-teal-hi);
+  --color-leaf: var(--accent-green);
   --color-ink: var(--text-primary);
   --color-muted: var(--text-muted);
   --color-faint: var(--text-faint);
+  --color-muted-hi: var(--text-muted-hi);
   --color-line: var(--border-subtle);
   --color-line-strong: var(--border-strong);
 
-  --font-display: var(--font-figtree);
+  --font-display: var(--font-display-family);
+  --font-mono: var(--font-mono-family);
   --font-body: var(--font-inter);
 }
 
@@ -109,8 +121,7 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   /* `clip` y no `hidden`: `overflow:hidden` convierte al body en
-     contenedor de scroll y rompe todos los `position: sticky` del
-     apilado. `clip` recorta igual sin crear ese contenedor. */
+     contenedor de scroll y rompe todos los `position: sticky`. */
   overflow-x: clip;
 }
 
@@ -128,43 +139,48 @@ body {
 }
 
 /* ============================================================
-   Tipografía
-   El registro es el de tech-ish: tamaño grande con peso medio
-   (500), no ExtraBold. El peso alto a tamaño grande es justo lo
-   que hace que una portada se lea como plantilla.
+   Tipografía — Space Grotesk / Inter / JetBrains Mono
+   Las mismas tres del portafolio, con la misma escala del
+   titular: clamp(38px, 4.6vw, 70px), peso 700, tracking -0.035em.
    ============================================================ */
 
 .t-display {
   font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
-  font-weight: 500;
-  font-size: clamp(2.5rem, 6.2vw, 5.5rem);
-  line-height: 0.94;
-  letter-spacing: -0.032em;
+  font-weight: 700;
+  /* 4.5vw deja la primera línea del titular en ~830px a 1425 de ancho,
+     con margen suficiente antes de la columna del párrafo. */
+  font-size: clamp(2.25rem, 4.5vw, 4.5rem);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
   text-wrap: balance;
 }
 
 .t-h2 {
   font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
-  font-weight: 500;
-  font-size: clamp(2rem, 4.6vw, 3.75rem);
-  line-height: 1;
-  letter-spacing: -0.028em;
+  font-weight: 700;
+  font-size: clamp(2.375rem, 5.5vw, 3.875rem);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
   text-wrap: balance;
 }
 
 .t-h3 {
   font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
-  font-weight: 500;
+  font-weight: 700;
   font-size: clamp(1.5rem, 2.4vw, 2.125rem);
-  line-height: 1.08;
-  letter-spacing: -0.022em;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
 }
 
+/* Etiqueta de sección: mono, versalita, tracking abierto. Es la
+   convención del portafolio y ancla cada sección. */
 .t-eyebrow {
-  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
-  font-weight: 500;
-  font-size: 0.9375rem;
-  color: var(--accent-teal);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent-to);
 }
 
 .t-lead {
@@ -179,6 +195,70 @@ body {
   color: var(--text-muted);
   max-width: var(--measure);
   text-wrap: pretty;
+}
+
+/* ============================================================
+   Titular: rodillo de palabras y hover por letra
+   ============================================================ */
+
+/* Ventana de una línea de alto: la palabra que sale se va por arriba
+   y la que entra llega por abajo. */
+.roll-host {
+  display: inline-block;
+  overflow: hidden;
+  /* `contain: paint` obliga a recortar en el momento de pintar. Sin
+     esto, con la pista promovida a su propia capa, el compositor deja
+     asomar la palabra vecina durante la transición. */
+  contain: paint;
+  vertical-align: bottom;
+  height: 1.08em;
+}
+
+.roll-track {
+  display: block;
+  transition: transform 450ms var(--ease-spring);
+  will-change: transform;
+}
+
+.roll-word {
+  display: block;
+  height: 1.08em;
+  white-space: nowrap;
+  color: var(--accent-to);
+}
+
+/* Cada letra es su propia caja para poder reaccionar sola al cursor. */
+.h-letter {
+  display: inline-block;
+  transition:
+    transform 260ms var(--ease-spring),
+    color 260ms ease;
+  will-change: transform;
+}
+
+.h-letter:hover {
+  transform: translateY(-0.14em) scale(1.12);
+  color: var(--accent-from);
+}
+
+/* En la línea fija el hover levanta y aclara, sin cambiar de color. */
+.h-line .h-letter:hover {
+  color: var(--accent-to);
+}
+
+/* Espacios: no deben capturar el cursor ni colapsar. */
+.h-letter[data-space="true"] {
+  width: 0.3em;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roll-track {
+    transition: none;
+  }
+  .h-letter:hover {
+    transform: none;
+  }
 }
 
 /* ============================================================
@@ -198,16 +278,33 @@ body {
   border: 0;
 }
 
+/* Subrayado que se barre al pasar el cursor. Técnica de palmo:
+   un clip-path de inset que se abre de izquierda a derecha. */
+.u-wipe {
+  position: relative;
+}
+
+.u-wipe::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1px;
+  background: currentColor;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 520ms var(--ease-liquid);
+}
+
+.u-wipe:hover::after,
+.u-wipe:focus-visible::after {
+  clip-path: inset(0 0 0 0);
+}
+
 /* ============================================================
    Apilado de secciones (baraja)
-   Cada sección se fija y la siguiente se le monta encima. El
-   `top` real lo calcula el motor en JS; aquí solo se declara la
-   escalera de z-index y el fondo opaco, sin el cual el apilado
-   no se distingue de un scroll normal.
    ============================================================ */
 
-/* El fondo de cada carta es opaco a propósito: sin eso el apilado no
-   se distingue de un scroll normal. */
 .stack {
   position: sticky;
   top: 0;
@@ -218,16 +315,25 @@ body {
   background-color: var(--bg-surface);
 }
 
-/* La portada es la excepción: se deja transparente para que el campo
-   atmosférico se vea entero y la cortina tenga dónde abrirse. */
+.stack--green {
+  background-color: var(--surface-green);
+}
+
+.stack-1 { z-index: 1; }
+.stack-2 { z-index: 10; }
+.stack-3 { z-index: 11; }
+.stack-4 { z-index: 12; }
+.stack-5 { z-index: 13; }
+.stack-6 { z-index: 14; }
+
+/* La portada se deja transparente para que el campo atmosférico se vea
+   entero y la cortina tenga dónde abrirse. */
 .stack-1 {
   background-color: transparent;
 }
 
-/* Como el resto de las cartas sí tapan el campo, cada una lleva su
-   propia luz local. Sin algo con estructura detrás, el vidrio no
-   refracta nada y se lee como un rectángulo gris. Es un solo
-   degradado por sección: barato de pintar y suficiente. */
+/* Cada carta lleva su propia luz local: sin algo con estructura
+   detrás, el vidrio no refracta nada. */
 .stack::before {
   content: "";
   position: absolute;
@@ -237,12 +343,12 @@ body {
   background:
     radial-gradient(
       42% 38% at var(--lit-x, 78%) var(--lit-y, 22%),
-      var(--glow-warm) 0%,
+      var(--lit-a, var(--glow-warm)) 0%,
       transparent 70%
     ),
     radial-gradient(
       34% 30% at var(--lit-x2, 14%) var(--lit-y2, 82%),
-      var(--glow-teal) 0%,
+      var(--lit-b, var(--glow-teal)) 0%,
       transparent 72%
     );
 }
@@ -258,24 +364,51 @@ body {
   z-index: 1;
 }
 
-.stack-1 { z-index: 1; }
-.stack-2 { z-index: 10; }
-.stack-3 { z-index: 11; }
-.stack-4 { z-index: 12; }
-.stack-5 { z-index: 13; }
-.stack-6 { z-index: 14; }
-
-/* El contenido del hero retrocede mientras lo cubren. */
 [data-recede] {
   transform-origin: 50% 35%;
   will-change: transform, opacity;
 }
 
 /* ============================================================
+   Cortinas no lineales (crestas)
+   El corte entre secciones no es una recta: cada sección lleva una
+   cresta orgánica arriba, del color de la propia sección, que se
+   monta sobre la anterior. Es la mecánica de `.t-wavy-crest` del
+   portafolio, dibujada en SVG en lugar de con un PNG.
+   ============================================================ */
+
+.crest {
+  position: absolute;
+  /* Exactamente el ancho de la sección: cualquier desbordamiento hace
+     que la página reporte contenido más ancho que la pantalla, y
+     Lighthouse lo marca aunque no se pueda desplazar. */
+  left: 0;
+  width: 100%;
+  bottom: calc(100% - 2px);
+  z-index: 2;
+  pointer-events: none;
+  display: block;
+  line-height: 0;
+}
+
+.crest svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Cortina elíptica: la técnica de palmo
+   (`clip-path: ellipse(75% 0% at 50% -5%)` que se abre). Se usa en la
+   transición a reseñas, para que no todas las cortinas sean crestas. */
+.curtain-ellipse {
+  clip-path: ellipse(
+    calc(58% + 62% * var(--reveal, 1)) calc(4% + 116% * var(--reveal, 1)) at 50%
+      -4%
+  );
+}
+
+/* ============================================================
    Campo de fondo
-   Es lo que el vidrio refracta. Sin algo con estructura detrás,
-   el liquid glass no tiene nada que doblar y se ve como un
-   rectángulo gris.
    ============================================================ */
 
 .atmosphere {
@@ -283,18 +416,12 @@ body {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  /* Cortina: arranca como una ventana redondeada detrás del hero y
-     se abre a sangre completa conforme baja el scroll. Es el gesto
-     de tech-ish, movido por --curtain en lugar de por GSAP. */
   clip-path: inset(
     calc(7% - 7% * var(--curtain)) calc(11% - 11% * var(--curtain)) round
       calc(44px - 44px * var(--curtain))
   );
 }
 
-/* En pantallas angostas la ventana de la cortina se abre menos: con
-   el recorte de escritorio el canto cruza el contenido y se lee como
-   una caja, no como un marco. */
 @media (max-width: 640px) {
   .atmosphere {
     clip-path: inset(
@@ -304,8 +431,6 @@ body {
   }
 }
 
-/* Masas de luz cálida que derivan muy despacio. Solo se anima
-   `transform`, nunca posición ni tamaño. */
 .atmosphere__glow {
   position: absolute;
   inset: -25%;
@@ -325,9 +450,6 @@ body {
   }
 }
 
-/* Láminas diagonales: el motivo de las referencias de liquid glass.
-   El difuminado va en los propios topes del degradado, no en un
-   `filter: blur()` a pantalla completa, que colapsa la GPU. */
 .atmosphere__slats {
   position: absolute;
   inset: -30%;
@@ -352,7 +474,6 @@ body {
   }
 }
 
-/* Grano: rompe el bandeado de los degradados grandes. */
 .atmosphere__grain {
   position: absolute;
   inset: 0;
@@ -361,8 +482,99 @@ body {
 }
 
 /* ============================================================
-   Revelado de líneas del titular
-   Un solo momento orquestado en toda la página, en la portada.
+   Pantalla de carga
+   Paneles sobredimensionados que se apartan girando desde su canto,
+   como en palmo.co.in. Van más altos y más anchos que la pantalla
+   para que al rotar no asome ningún hueco.
+   ============================================================ */
+
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.loader__panel {
+  position: absolute;
+  top: -30vh;
+  height: 160vh;
+  width: 58%;
+  background: var(--bg-primary);
+  transition: transform 1150ms var(--ease-liquid);
+}
+
+.loader__panel--left {
+  left: 0;
+  transform-origin: right center;
+}
+
+.loader__panel--right {
+  right: 0;
+  transform-origin: left center;
+}
+
+.loader__panel--back {
+  background: var(--bg-surface);
+}
+
+.loader__mark {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  transition:
+    opacity 420ms ease,
+    transform 620ms var(--ease-liquid);
+}
+
+.loader__bar {
+  width: 9rem;
+  height: 2px;
+  overflow: hidden;
+  background: var(--border-strong);
+  border-radius: 999px;
+}
+
+.loader__fill {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: var(--accent-gradient);
+  transition: width 260ms linear;
+}
+
+/* Salida: el disco se va, los paneles se abren en cascada. */
+.loader[data-done="true"] .loader__mark {
+  opacity: 0;
+  transform: scale(0.94);
+}
+
+.loader[data-done="true"] .loader__panel--back {
+  transform: scaleX(0);
+  transition-delay: 120ms;
+}
+
+.loader[data-done="true"] .loader__panel--front {
+  transform: scaleX(0);
+  transition-delay: 260ms;
+}
+
+.loader[data-hidden="true"] {
+  display: none;
+}
+
+/* Mientras carga no se debe poder mover la página. */
+body[data-loading="true"] {
+  overflow: hidden;
+}
+
+/* ============================================================
+   Revelados
    ============================================================ */
 
 @keyframes kv-rise {
@@ -400,6 +612,174 @@ body {
   animation: kv-fade var(--dur-slow) var(--ease-out-expo) both;
 }
 
+/* Entrada escalonada al aparecer en pantalla. La activa el motor de
+   apilado con [data-inview="true"]. */
+.a-stagger > * {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 700ms var(--ease-liquid),
+    transform 700ms var(--ease-liquid);
+}
+
+[data-inview="true"].a-stagger > * {
+  opacity: 1;
+  transform: none;
+}
+
+[data-inview="true"].a-stagger > *:nth-child(1) { transition-delay: 0ms; }
+[data-inview="true"].a-stagger > *:nth-child(2) { transition-delay: 90ms; }
+[data-inview="true"].a-stagger > *:nth-child(3) { transition-delay: 180ms; }
+[data-inview="true"].a-stagger > *:nth-child(4) { transition-delay: 270ms; }
+[data-inview="true"].a-stagger > *:nth-child(5) { transition-delay: 360ms; }
+[data-inview="true"].a-stagger > *:nth-child(6) { transition-delay: 450ms; }
+
+@keyframes kv-drift {
+  0% {
+    transform: translateY(-100%);
+  }
+  55%,
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes kv-caret {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  50%,
+  95% {
+    opacity: 0;
+  }
+}
+
+@keyframes kv-breathe {
+  from {
+    opacity: 0.45;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+/* ============================================================
+   Carrusel de trabajos (coverflow)
+   La mecánica de `.pgf-stage` del Lab 3D del portafolio: escenario
+   con perspectiva, tarjetas absolutas y transformadas en 3D según su
+   distancia a la activa.
+   ============================================================ */
+
+.deck {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: clamp(26rem, 56vh, 34rem);
+  perspective: 1200px;
+  user-select: none;
+  cursor: grab;
+}
+
+.deck:active {
+  cursor: grabbing;
+}
+
+.deck__track {
+  position: relative;
+  width: min(21rem, 78vw);
+  height: clamp(23rem, 50vh, 30rem);
+  transform-style: preserve-3d;
+}
+
+.deck__card {
+  position: absolute;
+  inset: 0;
+  transform-origin: center center;
+  transition:
+    transform 620ms var(--ease-liquid),
+    opacity 620ms ease,
+    border-color 320ms ease,
+    box-shadow 320ms ease;
+}
+
+.deck__card[data-active="false"] {
+  cursor: pointer;
+}
+
+.deck__nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.deck__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 999px;
+  color: var(--text-primary);
+  transition: all 260ms var(--ease-liquid);
+}
+
+.deck__btn:hover {
+  color: #120e0a;
+  background: var(--accent-gradient);
+  border-color: transparent;
+  transform: scale(1.06);
+}
+
+/* ============================================================
+   Reseñas — abanico de tarjetas
+   `--pos` coloca cada tarjeta respecto al centro y `--spread` (que
+   escribe el motor de scroll) las abre conforme entra la sección.
+   ============================================================ */
+
+.fan {
+  display: flex;
+  justify-content: center;
+  gap: 1.75rem;
+}
+
+.fan__card {
+  flex: 1;
+  max-width: 24rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transform: translateX(calc(var(--pos) * var(--spread) * 22px))
+    rotate(calc(var(--pos) * var(--spread) * 1.1deg));
+  transition:
+    transform 620ms var(--ease-liquid),
+    border-color 320ms ease,
+    box-shadow 320ms ease;
+}
+
+.fan__card:hover {
+  transform: translateX(calc(var(--pos) * var(--spread) * 22px))
+    translateY(-10px) scale(1.025);
+}
+
+@media (max-width: 900px) {
+  .fan {
+    flex-direction: column;
+    align-items: center;
+  }
+  .fan__card,
+  .fan__card:hover {
+    transform: none;
+    max-width: none;
+    width: 100%;
+  }
+}
+
 /* ============================================================
    Accesibilidad
    ============================================================ */
@@ -421,126 +801,144 @@ body {
   .atmosphere {
     clip-path: none;
   }
-}
 
-/* Guía de scroll: una luz que recorre su carril. */
-@keyframes kv-drift {
-  0% {
-    transform: translateY(-100%);
-  }
-  55%,
-  100% {
-    transform: translateY(100%);
-  }
-}
-
-/* Pulso que viaja por la tubería de automatización. */
-@keyframes kv-travel {
-  0% {
-    transform: translateX(0);
-    opacity: 0;
-  }
-  12%,
-  78% {
+  .a-stagger > * {
     opacity: 1;
-  }
-  100% {
-    transform: translateX(var(--travel, 220px));
-    opacity: 0;
-  }
-}
-
-/* Cursor de escritura del panel de IA. */
-@keyframes kv-caret {
-  0%,
-  45% {
-    opacity: 1;
-  }
-  50%,
-  95% {
-    opacity: 0;
-  }
-}
-
-/* Respiración muy tenue para los indicadores "en vivo". */
-@keyframes kv-breathe {
-  from {
-    opacity: 0.45;
-    transform: scale(0.92);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1.06);
+    transform: none;
   }
 }
 
 /* ============================================================
-   Scroller horizontal pegajoso
-   La mecánica de `.column-scroll` de tech-ish: un bloque alto,
-   un visor fijo dentro y un carril que se desplaza en horizontal
-   conforme baja el scroll. En móvil no hay ancho que repartir,
-   así que el carril se vuelve una columna normal.
+   Navbar dinámica
+   Lógica del portafolio: al bajar se colapsa a la pastilla mínima
+   y al subir, detenerse o volver cerca del tope, se despliega.
+   El colapso se hace con max-width y no con display, para que la
+   transición tenga qué animar.
    ============================================================ */
 
-.scroller {
+[data-nav-pill] {
+  transition:
+    transform 450ms var(--ease-liquid),
+    padding 450ms var(--ease-liquid),
+    background 450ms var(--ease-liquid);
+}
+
+[data-nav-pill][data-shrunk="true"] {
+  transform: scale(0.94);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  max-width: 34rem;
+  margin-left: 0.5rem;
+  opacity: 1;
+  overflow: hidden;
+  transition:
+    max-width 450ms var(--ease-liquid),
+    opacity 300ms ease,
+    margin 300ms ease;
+}
+
+[data-shrunk="true"] .nav-links {
+  max-width: 0;
+  opacity: 0;
+  margin-left: 0;
+}
+
+/* Punto de estado: respira despacio, no parpadea. */
+.nav-dot {
   position: relative;
+  display: inline-flex;
+  width: 0.5rem;
+  height: 0.5rem;
 }
 
-.scroller__track {
-  display: flex;
-  flex-direction: column;
-  gap: 4.5rem;
-}
-
-.scroller__panel {
-  width: 100%;
-}
-
-@media (min-width: 1024px) {
-  .scroller {
-    /* Un viewport para el primer panel y 0.8 por cada uno que sigue:
-       suficiente recorrido para leer sin que se haga interminable. */
-    height: calc(100svh + (var(--panels) - 1) * 80svh);
-  }
-
-  .scroller__viewport {
-    position: sticky;
-    top: 0;
-    display: flex;
-    align-items: center;
-    height: 100svh;
-    overflow: hidden;
-  }
-
-  .scroller__track {
-    flex-direction: row;
-    gap: 0;
-    width: calc(var(--panels) * 100%);
-    transform: translate3d(var(--track-x, 0%), 0, 0);
-    will-change: transform;
-  }
-
-  .scroller__panel {
-    flex: 0 0 auto;
-    width: calc(100% / var(--panels));
-    padding-inline: 0;
-  }
-}
-
-/* Riel de avance del scroller: cinco segmentos, el activo encendido. */
-.scroller__rail {
-  display: flex;
-  gap: 6px;
-}
-
-.scroller__rail span {
-  height: 2px;
-  flex: 1 1 0;
+.nav-dot::before,
+.nav-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
   border-radius: 999px;
-  background: var(--border-strong);
-  transition: background-color var(--dur-slow) var(--ease-liquid);
+  background: var(--accent-green);
 }
 
-.scroller__rail span[data-on="true"] {
-  background: var(--accent-from);
+.nav-dot::after {
+  animation: nav-ping 2.4s var(--ease-out-expo) infinite;
+}
+
+@keyframes nav-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  70%,
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+/* ============================================================
+   Equipo — retratos que se inclinan con el cursor
+   Las variables --tilt-* y --shine-* las escribe el manejador de
+   puntero; aquí solo se declara cómo se usan.
+   ============================================================ */
+
+.team-frame {
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  --glass-radius: var(--r-portrait);
+  transform: perspective(760px) rotateX(var(--tilt-x, 0deg))
+    rotateY(var(--tilt-y, 0deg));
+  transition:
+    transform 420ms var(--ease-liquid),
+    box-shadow 420ms var(--ease-liquid);
+}
+
+.group:hover .team-frame {
+  box-shadow:
+    0 24px 54px rgba(0, 0, 0, 0.45),
+    0 0 30px -8px var(--glow-warm),
+    inset 0 1px 0 var(--glass-edge-top);
+}
+
+.team-shine {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 420ms var(--ease-liquid);
+  background: radial-gradient(
+    42% 42% at var(--shine-x, 50%) var(--shine-y, 50%),
+    rgba(255, 244, 232, 0.3) 0%,
+    transparent 68%
+  );
+}
+
+.group:hover .team-shine {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .team-frame {
+    transform: none;
+  }
+}
+
+/* ============================================================
+   Espacio para la cresta
+   La sección siguiente monta su cresta sobre esta, así que hay que
+   reservarle el alto o se come las últimas líneas del contenido.
+   ============================================================ */
+
+.stack--pad {
+  padding-top: var(--section-y);
+  padding-bottom: calc(var(--section-y) + clamp(5rem, 9vw, 9rem));
+}
+
+.stack--pad-wide {
+  padding-top: var(--section-y-wide);
+  padding-bottom: calc(var(--section-y-wide) + clamp(5rem, 9vw, 9rem));
 }

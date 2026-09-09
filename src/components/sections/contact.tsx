@@ -3,6 +3,7 @@
 import { useId, useMemo, useState, type FormEvent } from "react";
 
 import { ActionButton } from "@/components/ui/action";
+import { Crest } from "@/components/ui/crest";
 import { WhatsappGlyph } from "@/components/ui/whatsapp-glyph";
 import { useTranslations } from "@/lib/i18n/provider";
 import { serviceIds, serviceTitleKey } from "@/lib/services";
@@ -66,10 +67,18 @@ export function Contact() {
     <section
       id="contacto"
       data-stack
-      className="stack stack-5 stack--alt py-24 sm:py-28"
-      style={{ ["--lit-x" as string]: "72%", ["--lit-y" as string]: "82%", ["--lit-x2" as string]: "20%", ["--lit-y2" as string]: "10%" }}
+      className="stack stack-6 stack--alt stack--pad"
+      style={{
+        ["--lit-x" as string]: "72%",
+        ["--lit-y" as string]: "82%",
+        ["--lit-x2" as string]: "20%",
+        ["--lit-y2" as string]: "10%",
+      }}
     >
+      <Crest shape="ola" color="var(--bg-surface)" />
+
       <div className="u-shell">
+        <p className="t-eyebrow mb-5">{t("contact.eyebrow")}</p>
         <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] lg:gap-16">
           <div>
             <h2 className="t-h2">{t("contact.title")}</h2>
@@ -237,7 +246,7 @@ function ChatPreview({
                     ["--glass-tint" as string]: "rgba(47,168,184,0.82)",
                     color: "#04191e",
                   }
-                : { color: "var(--text-muted)" }
+                : { color: "var(--text-muted-hi)" }
             }
           >
             {body ?? empty}

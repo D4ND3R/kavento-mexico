@@ -1,189 +1,203 @@
 /* ==================================================================
    MOTOR DE LIQUID GLASS
-   ==================================================================
 
-   El vidrio de Apple no es "un fondo translúcido con blur". Son cinco
-   capas que trabajan juntas, y saltarse cualquiera hace que se vea
-   como glassmorphism de 2020:
+   Receta base dada por el cliente, tokenizada para poder ajustar la
+   intensidad sin tocar componentes:
 
-   1. Cuerpo      backdrop-filter con blur Y saturación: el vidrio
-                  concentra el color de lo que hay detrás, no solo lo
-                  difumina.
-   2. Refracción  el borde desvía la luz. Se resuelve con un filtro SVG
-                  de desplazamiento aplicado al backdrop (#lg-refract).
-   3. Especular   un aro de 1px más brillante en el canto que mira a la
-                  luz y un rebote tenue en el canto opuesto.
-   4. Grosor      un aro interior apenas visible que da la sensación de
-                  que la pieza tiene canto, no de que es una calca.
-   5. Sombra      separa la pieza del fondo sin ensuciarlo.
+     background: rgba(255,255,255,.15)
+     backdrop-filter: blur(20px)
+     border: 1px solid rgba(255,255,255,.3)
+     box-shadow:
+       0 8px 32px rgba(0,0,0,.1)                   sombra ambiental
+       inset 0 1px 0 rgba(255,255,255,.5)          canto superior
+       inset 0 -1px 0 rgba(255,255,255,.1)         canto inferior
+       inset 0 0 20px 10px rgba(255,255,255,1)     floración interior
+     ::before  filo de 1px arriba, nace y muere en los lados
+     ::after   filo de 1px a la izquierda, degradado vertical
 
-   La luz de todo el sitio viene de arriba a la izquierda. Todos los
-   degradados especulares de este archivo usan 140deg por eso.
+   La floración interior (el cuarto inset) es lo que hace que el canto
+   se encienda por dentro y la pieza parezca tener grosor de vidrio.
+   Sobre el fondo café oscuro va en blanco cálido y con la alfa bajada
+   por token: a opacidad 1 el resplandor se come el texto. El valor
+   original queda a un token de distancia, en --glass-bloom.
    ================================================================== */
 
 :root {
-  /* Tinte del cuerpo del vidrio. Cálido, para que no se enfríe la
-     paleta al superponerse sobre el fondo café. */
-  --glass-tint: rgba(255, 244, 232, 0.055);
-  --glass-tint-strong: rgba(255, 244, 232, 0.09);
-  --glass-tint-solid: rgba(29, 23, 18, 0.55);
+  --glass-bg: rgba(255, 244, 232, 0.12);
+  --glass-blur: 20px;
+  --glass-saturate: 175%;
+  --glass-border: rgba(255, 255, 255, 0.3);
 
-  --glass-blur: 16px;
-  --glass-saturate: 180%;
+  /* Floración interior. Receta original: rgba(255,255,255,1). */
+  --glass-bloom: rgba(255, 246, 236, 0.16);
+  --glass-bloom-blur: 20px;
+  --glass-bloom-spread: 10px;
 
-  /* Cantos */
-  --glass-edge-hi: rgba(255, 255, 255, 0.5);
-  --glass-edge-lo: rgba(255, 255, 255, 0.14);
-  --glass-inner: rgba(255, 255, 255, 0.07);
+  --glass-edge-top: rgba(255, 255, 255, 0.5);
+  --glass-edge-bottom: rgba(255, 255, 255, 0.1);
+  --glass-filo: rgba(255, 255, 255, 0.8);
+
+  --glass-radius: 20px;
 
   /* Curva de tech-ish: entra rápido y se asienta sin rebotar. */
   --ease-liquid: cubic-bezier(0.135, 0.9, 0.15, 1);
+  /* Rebote del portafolio, para el rodillo de palabras. */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --dur-liquid: 900ms;
 }
 
-/* Todo el sistema vive en @layer components: así las utilidades de
-   Tailwind (rounded-*, p-*, text-*) siguen ganando cuando un
-   componente necesita salirse del valor por defecto. Sin la capa,
-   `.lg` sobreescribía el radio de cada tarjeta y todo salía con
-   forma de pastilla. */
 @layer components {
-  /* ------------------------------------------------------------------
-     Pieza de vidrio
-     ------------------------------------------------------------------ */
+  /* Todo el sistema vive en @layer components para que las utilidades
+     de Tailwind (rounded-*, p-*, text-*) sigan ganando cuando un
+     componente necesita salirse del valor por defecto. */
 
-  .lg {
+  .lg,
+  .glass-card {
     position: relative;
-    isolation: isolate;
-    background-color: var(--glass-tint);
-    border-radius: var(--r-pill);
-    box-shadow:
-      0 10px 34px -10px rgba(0, 0, 0, 0.62),
-      inset 0 0 0 1px var(--glass-inner);
-  }
-
-  /* Cuerpo: blur + saturación. Se separa del elemento para poder
-     aplicarle la refracción sin arrastrar el contenido. */
-  .lg::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    border-radius: inherit;
+    background: var(--glass-bg);
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur))
+      saturate(var(--glass-saturate));
+    border-radius: var(--glass-radius);
+    border: 1px solid var(--glass-border);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.28),
+      inset 0 1px 0 var(--glass-edge-top),
+      inset 0 -1px 0 var(--glass-edge-bottom),
+      inset 0 0 var(--glass-bloom-blur) var(--glass-bloom-spread)
+        var(--glass-bloom);
+    overflow: hidden;
   }
 
-  /* Canto especular: brillante arriba-izquierda, se apaga, y rebota
-     apenas abajo-derecha. Es un aro de 1px hecho con mask-composite,
-     no un `border`, para que siga la curvatura exacta del radio. */
-  .lg::after {
+  /* Filo superior: nace y muere en los lados, no cruza de canto a canto. */
+  .lg::before,
+  .glass-card::before {
     content: "";
     position: absolute;
-    inset: 0;
-    z-index: 1;
-    border-radius: inherit;
-    padding: 1px;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
     pointer-events: none;
     background: linear-gradient(
-      140deg,
-      var(--glass-edge-hi) 0%,
-      rgba(255, 255, 255, 0.08) 26%,
-      rgba(255, 255, 255, 0) 52%,
-      var(--glass-edge-lo) 100%
+      90deg,
+      transparent,
+      var(--glass-filo),
+      transparent
     );
-    -webkit-mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    mask-composite: exclude;
   }
 
-  /* Refracción real: el filtro SVG desplaza el backdrop con ruido, así
-     que lo que se ve a través del vidrio se dobla en el canto. Solo se
-     activa donde el navegador puede aplicar filtros SVG al backdrop
-     (Chrome y Edge hoy); en el resto queda el vidrio de las capas 1, 3
-     y 4, que ya se sostiene solo. */
+  /* Filo izquierdo: la luz entra por ahí, así que ese canto brilla
+     arriba y se apaga hacia abajo. */
+  .lg::after,
+  .glass-card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      var(--glass-filo),
+      transparent,
+      rgba(255, 255, 255, 0.3)
+    );
+  }
+
+  /* Refracción: filtro SVG de desplazamiento sobre el backdrop. Solo
+     donde el navegador lo soporta (Chrome y Edge hoy); en el resto
+     queda el vidrio, que ya se sostiene solo. */
   @supports (backdrop-filter: url(#lg-refract)) {
-    .lg--refract::before {
+    .lg--refract {
       backdrop-filter: url(#lg-refract) blur(var(--glass-blur))
         saturate(var(--glass-saturate));
     }
   }
 
-  /* Variantes ------------------------------------------------------- */
+  /* Variantes ---------------------------------------------------- */
 
-  /* Más opaca: para superficies que llevan texto largo encima. */
+  /* Deja salir a los hijos. `overflow: hidden` recorta las gotas del
+     filtro líquido y los menús desplegables. */
+  .lg--open {
+    overflow: visible;
+  }
+
+  .lg--pill {
+    --glass-radius: 999px;
+  }
+
+  /* Panel grande: más blur y menos floración, porque lleva texto. */
   .lg--panel {
-    --glass-tint: var(--glass-tint-strong);
-    --glass-blur: 22px;
-    border-radius: var(--r-panel);
-  }
-
-  /* Casi sólida: cuando el vidrio tiene que ganarle a un fondo con
-     mucho contraste y la legibilidad manda. */
-  .lg--solid {
-    background-color: var(--glass-tint-solid);
     --glass-blur: 26px;
+    --glass-bloom: rgba(255, 246, 236, 0.1);
+    --glass-bloom-spread: 14px;
   }
 
-  /* Sin sombra, para piezas que viven dentro de otra pieza de vidrio. */
+  /* Casi sólida: cuando la legibilidad manda sobre la transparencia. */
+  .lg--solid {
+    --glass-bg: rgba(29, 23, 18, 0.72);
+    --glass-bloom: rgba(255, 246, 236, 0.08);
+  }
+
+  /* Pieza dentro de otra pieza: sin sombra exterior ni floración. */
   .lg--flush {
-    box-shadow: inset 0 0 0 1px var(--glass-inner);
+    box-shadow:
+      inset 0 1px 0 var(--glass-edge-top),
+      inset 0 -1px 0 var(--glass-edge-bottom);
+    --glass-bg: rgba(255, 244, 232, 0.07);
   }
 
-  /* ------------------------------------------------------------------
+  /* ----------------------------------------------------------------
      Fusión líquida
-     El filtro #lg-goo hace que dos piezas cercanas se derritan una en
-     otra en vez de solaparse. Es lo que separa "liquid glass" de
-     "glassmorphism": las formas se comportan como una gota.
-     Se aplica al CONTENEDOR; las piezas hijas se funden entre sí.
-     ------------------------------------------------------------------ */
+     El filtro #lg-goo funde dos formas cercanas por un cuello en vez
+     de solaparlas. Se aplica SOLO a la capa de gotas: un `filter`
+     afecta a todo su subárbol y borraría el texto de las etiquetas.
+     ---------------------------------------------------------------- */
 
   .lg-merge {
     filter: url(#lg-goo);
-    /* El filtro recorta lo que se salga de la caja: se le da aire. */
-    padding: 6px;
-    margin: -6px;
   }
 
-  /* El texto no debe pasar por el filtro: lo desenfoca. Se sube por
-     encima con una capa propia. */
-  .lg-merge__label {
-    position: relative;
-    z-index: 2;
-    filter: none;
-  }
-
-  /* ------------------------------------------------------------------
+  /* ----------------------------------------------------------------
      Movimiento
-     Todas las piezas de vidrio comparten la misma curva y duración, así
-     la interfaz se siente hecha del mismo material.
-     ------------------------------------------------------------------ */
+     ---------------------------------------------------------------- */
 
   .lg-motion {
-    transition-property: transform, background-color, box-shadow, opacity,
-      border-radius, width;
+    transition-property: transform, background, box-shadow, opacity,
+      border-color, border-radius, max-width, padding;
     transition-duration: var(--dur-liquid);
     transition-timing-function: var(--ease-liquid);
   }
 
-  /* Presión: el vidrio cede un poco y se aclara, como si la luz se
-     concentrara bajo el dedo. */
   .lg-press:active {
     transform: scale(0.975);
-    --glass-tint: var(--glass-tint-strong);
     transition-duration: 120ms;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .lg-motion,
-    .lg-press:active {
-      transition-duration: 0.01ms;
-      transform: none;
-    }
+  /* Realce al pasar el cursor: sube el vidrio, se enciende el canto y
+     la floración se abre. */
+  .lg-hover:hover {
+    --glass-bg: rgba(255, 244, 232, 0.19);
+    --glass-border: rgba(255, 255, 255, 0.45);
+    --glass-bloom: rgba(255, 246, 236, 0.26);
+    transform: translateY(-4px);
+    box-shadow:
+      0 18px 46px rgba(0, 0, 0, 0.42),
+      0 0 30px -6px var(--glow-warm),
+      inset 0 1px 0 var(--glass-edge-top),
+      inset 0 -1px 0 var(--glass-edge-bottom),
+      inset 0 0 var(--glass-bloom-blur) var(--glass-bloom-spread)
+        var(--glass-bloom);
   }
+}
 
+@media (prefers-reduced-motion: reduce) {
+  .lg-motion,
+  .lg-press:active,
+  .lg-hover:hover {
+    transition-duration: 0.01ms;
+    transform: none;
+  }
 }

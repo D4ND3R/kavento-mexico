@@ -14,12 +14,14 @@
     "sectionsLabel": "Site sections",
     "langGroup": "Language",
     "langEs": "Spanish",
-    "langEn": "English"
+    "langEn": "English",
+    "status": "Taking on projects",
+    "prev": "Previous",
+    "next": "Next"
   },
   "hero": {
-    "kicker": "Anything digital.",
-    "titleLine1": "You imagine it.",
-    "titleLine2": "We build it.",
+    "kicker": "Soluciones Digitales Kavento México",
+    "titleLine1": "We build technology that",
     "lead": "We are a Mexican team. We build software made to fit, end to end.",
     "ctaPrimary": "Tell us what you need",
     "ctaSecondary": "See what we do",
@@ -32,7 +34,11 @@
     "cardContactNote": "We reply the same day.",
     "cardTeamLabel": "Who does it",
     "cardTeamValue": "Mexican team",
-    "cardTeamNote": "You talk straight to the people who write the code."
+    "cardTeamNote": "You talk straight to the people who write the code.",
+    "word1": "Scales",
+    "word2": "Automates",
+    "word3": "Sells",
+    "word4": "Holds up"
   },
   "about": {
     "title": "What we do",
@@ -42,7 +48,8 @@
     "photo1Alt": "Placeholder: the Kavento team working in the office",
     "photo2Alt": "Placeholder: planning session at a whiteboard",
     "photo3Alt": "Placeholder: close-up of code on screen",
-    "photoPlaceholder": "Photo to replace"
+    "photoPlaceholder": "Photo to replace",
+    "eyebrow": "About us"
   },
   "services": {
     "title": "What we build",
@@ -69,7 +76,9 @@
         "title": "Private AI and language models",
         "body": "We deploy language models on your own data and your own infrastructure. Your information never leaves your company."
       }
-    }
+    },
+    "eyebrow": "Work — What we build",
+    "hint": "Drag or use the arrows"
   },
   "team": {
     "title": "Our team",
@@ -77,7 +86,8 @@
     "namePlaceholder": "[Team member name]",
     "rolePlaceholder": "[Role]",
     "portraitAlt": "Placeholder: portrait of a team member",
-    "note": "Placeholder: replace names, roles and portraits in src/lib/team.ts"
+    "note": "Placeholder: replace names, roles and portraits in src/lib/team.ts",
+    "eyebrow": "Team"
   },
   "contact": {
     "title": "Tell us what you need",
@@ -99,7 +109,8 @@
     "numberMissing": "The WhatsApp number is not set in NEXT_PUBLIC_WHATSAPP_NUMBER.",
     "waTemplate": "Hi Kavento. I am {name}. I am interested in: {service}. {message}",
     "waGreeting": "Hi Kavento, I would like to talk about a project.",
-    "fabLabel": "Message us on WhatsApp"
+    "fabLabel": "Message us on WhatsApp",
+    "eyebrow": "Contact"
   },
   "footer": {
     "tagline": "Custom digital solutions, from Mexico.",
@@ -130,5 +141,14 @@
     "aiPrompt": "How much did we sell in Puebla last month?",
     "aiAnswer": "1,284,500 MXN across 312 orders.",
     "aiPrivacy": "Your data never leaves your server"
+  },
+  "reviews": {
+    "eyebrow": "Reviews",
+    "title": "In their words",
+    "lead": "Placeholder: real client reviews go here. The ones below are filler and must be replaced before launch.",
+    "note": "Placeholder: replace these reviews in src/lib/reviews.ts",
+    "quotePlaceholder": "[Review text. Ask the client for two or three sentences on what we solved, how long it took and what changed afterwards.]",
+    "namePlaceholder": "[Client name]",
+    "rolePlaceholder": "[Role · Company]"
   }
 }

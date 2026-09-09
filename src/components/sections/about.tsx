@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 
+import { Crest } from "@/components/ui/crest";
 import { useTranslations } from "@/lib/i18n/provider";
 import type { MessageKey } from "@/lib/i18n/config";
 
@@ -50,10 +51,18 @@ export function About() {
     <section
       id="nosotros"
       data-stack
-      className="stack stack-2 stack--alt py-24 sm:py-28"
-      style={{ ["--lit-x" as string]: "18%", ["--lit-y" as string]: "16%", ["--lit-x2" as string]: "88%", ["--lit-y2" as string]: "78%" }}
+      className="stack stack-2 stack--alt stack--pad"
+      style={{
+        ["--lit-x" as string]: "18%",
+        ["--lit-y" as string]: "16%",
+        ["--lit-x2" as string]: "88%",
+        ["--lit-y2" as string]: "78%",
+      }}
     >
+      <Crest shape="loma" color="var(--bg-surface)" />
+
       <div className="u-shell">
+        <p className="t-eyebrow mb-5">{t("about.eyebrow")}</p>
         <div className="lg:grid lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start lg:gap-16">
           <h2 className="t-h2 max-w-[12ch]">{t("about.title")}</h2>
 
@@ -69,11 +78,11 @@ export function About() {
           </div>
         </div>
 
-        <div className="mt-16 grid gap-4 sm:grid-cols-2 lg:mt-8 lg:grid-cols-12 lg:gap-6">
+        <div data-stagger className="a-stagger mt-16 grid gap-4 sm:grid-cols-2 lg:mt-8 lg:grid-cols-12 lg:gap-6">
           {PHOTOS.map((photo) => (
             <figure
               key={photo.id}
-              className={`lg lg--refract relative overflow-hidden rounded-[var(--r-panel)] ${photo.className}`}
+              className={`lg lg--refract lg-motion lg-hover relative ${photo.className}`}
               style={{ aspectRatio: photo.ratio }}
             >
               {photo.src ? (
@@ -85,7 +94,7 @@ export function About() {
                   className="object-cover"
                 />
               ) : (
-                <span className="absolute inset-0 flex items-end p-4 text-[0.75rem] text-faint">
+                <span className="absolute inset-0 flex items-end p-4 text-[0.75rem] text-muted-hi">
                   {t("about.photoPlaceholder")}
                 </span>
               )}
