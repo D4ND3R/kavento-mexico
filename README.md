@@ -5,8 +5,9 @@ Español por defecto, con conmutador a inglés que no recarga la página.
 
 - **Framework:** Next.js 16 (App Router) + TypeScript estricto
 - **Estilos:** Tailwind CSS v4 sobre variables CSS (design tokens)
-- **3D:** react-three-fiber + drei, montado de forma perezosa por sección
-- **Animación de scroll:** GSAP + ScrollTrigger
+- **Interfaz:** motor propio de Liquid Glass (filtros SVG + backdrop-filter)
+- **Scroll:** apilado de secciones tipo baraja, con cortinas, escrito a mano
+- **Dependencias de terceros:** ninguna. Solo Next y React.
 - **Contacto:** enlace profundo a WhatsApp, sin backend
 
 ---
@@ -83,7 +84,7 @@ que no existe es un error de compilación, no un hueco vacío en producción.
 
 El idioma es estado de React (`src/lib/i18n/provider.tsx`), no una ruta.
 Cambiarlo no navega, así que **no se pierde la posición de scroll** ni se
-desmontan los canvas 3D. La preferencia se guarda en una cookie de un año, que el servidor lee para
+rompe el apilado de secciones. La preferencia se guarda en una cookie de un año, que el servidor lee para
 servir el HTML con el atributo `lang` correcto desde el primer byte: sin
 parpadeo de idioma al recargar.
 
@@ -129,16 +130,81 @@ src/
   app/
     layout.tsx        Tipografías, metaetiquetas, idioma inicial
     page.tsx          Composición de la página única
-    globals.css       Design tokens y utilidades base
+    globals.css       Design tokens, apilado y campo de fondo
+    glass.css         Motor de Liquid Glass
   components/
     sections/         Hero, nosotros, servicios, equipo, contacto, pie
-    three/            Escenas 3D por servicio
-    ui/               Logo, conmutador de idioma, botones
+    mocks/            Maquetas de interfaz que ilustran cada servicio
+    ui/               Logo, conmutador, botones, filtros SVG, atmósfera
+    stack-root.tsx    Arranque del motor de apilado
   lib/
+    use-scroll-stack.ts  Motor de apilado y cortinas
     i18n/             Diccionarios y proveedor de idioma
+    services.ts       Lista única de servicios
     site.ts           Configuración del cliente (WhatsApp, redes, URL)
     team.ts           Datos del equipo
 ```
+
+---
+
+## Motor de Liquid Glass
+
+El vidrio no es "fondo translúcido con blur". En `src/app/glass.css` son
+cinco capas, y saltarse cualquiera lo devuelve al glassmorphism de 2020:
+
+| Capa | Qué hace |
+| --- | --- |
+| Cuerpo | `backdrop-filter` con blur **y saturación**: el vidrio concentra el color de lo que hay detrás, no solo lo difumina |
+| Refracción | filtro SVG `#lg-refract` (`feTurbulence` + `feDisplacementMap`) aplicado al backdrop: el canto dobla la luz |
+| Especular | aro de 1px hecho con `mask-composite`, brillante en el canto que mira a la luz y con un rebote tenue en el opuesto |
+| Grosor | aro interior apenas visible, para que la pieza tenga canto y no parezca una calca |
+| Sombra | separa la pieza del fondo sin ensuciarlo |
+
+Toda la luz del sitio viene de **arriba a la izquierda**: por eso cada
+degradado especular usa `140deg`.
+
+**Fusión líquida.** El filtro `#lg-goo` (`feGaussianBlur` +
+`feColorMatrix` con alfa `19 -9`) hace que dos formas cercanas se unan
+por un cuello en vez de solaparse. Se usa en la navbar y en el
+conmutador de idioma: el indicador son **dos gotas**, una rápida y una
+lenta, que al separarse quedan unidas y estiran el indicador como
+líquido.
+
+> El filtro se aplica **solo a la capa de gotas**. Un `filter` afecta a
+> todo su subárbol, así que envolver también las etiquetas les borra el
+> texto.
+
+Clases disponibles: `.lg` (pieza base), `.lg--refract`, `.lg--panel`,
+`.lg--solid`, `.lg--flush`, `.lg-motion`, `.lg-press`.
+
+Todo vive en `@layer components` para que las utilidades de Tailwind
+(`rounded-*`, `p-*`) sigan ganando cuando un componente necesita
+salirse del valor por defecto.
+
+---
+
+## Apilado de secciones y cortinas
+
+`src/lib/use-scroll-stack.ts`. Cada sección lleva `data-stack`, se fija
+con `position: sticky` y una escalera de z-index creciente, de modo que
+la siguiente se le monta encima como una carta sobre otra.
+
+- `updatePins()` calcula el anclaje: si la sección es más alta que la
+  pantalla se fija en `vh - alto` (negativo), para que se alcance a leer
+  completa antes de quedar clavada.
+- A cada sección se le inyecta una **cortina** negra cuya opacidad sube
+  conforme la siguiente la cubre. Sin ella la carta de abajo se ve igual
+  de brillante que la de encima y el apilado no se lee.
+- Todo el trabajo por cuadro pasa por un solo `requestAnimationFrame`
+  que **separa la fase de lectura de la de escritura**, para no provocar
+  layout thrashing.
+- El avance del hero se expone a CSS en `--curtain`, que abre el campo
+  de fondo con `clip-path`.
+
+> Si el scroll se rompe o las secciones dejan de empalmarse, revisa que
+> ningún ancestro tenga `overflow: hidden`. En `body` se usa
+> `overflow-x: clip` justamente por eso: `hidden` convierte al body en
+> contenedor de scroll y anula todos los `sticky`.
 
 ---
 
@@ -157,6 +223,7 @@ paleta completa es editar ese bloque.
 | `--text-primary` | `#F5EFE6` | Texto principal |
 | `--text-muted` | `#B5A995` | Texto secundario |
 | `--text-faint` | `#9C9382` | Notas y textos terciarios |
+| `--accent-teal-hi` | `#5FC8D8` | Teal para texto pequeño sobre vidrio |
 | `--border-subtle` | `rgba(255,255,255,.08)` | Separadores y vidrio |
 
 El naranja `#FF7A1A` **no se usa para texto pequeño** (2.9:1 sobre el fondo):
@@ -177,38 +244,47 @@ solo para rellenos, bordes y luz. Sobre el fondo general, `#B5A995` da
 - Estructura de encabezados sin saltos (H1 → H2 → H3) y landmarks
   `main`, `footer` y `nav` etiquetados.
 - `prefers-reduced-motion` respetado: se apagan las animaciones no
-  esenciales, no se carga GSAP y los modelos 3D se pintan una sola vez
-  en su estado ensamblado en lugar de animarse.
-- Los canvas de servicio son decorativos y están marcados como tales;
+  esenciales, el apilado deja las cortinas en su estado final y el
+  scroller horizontal muestra los paneles en columna, que es el estado
+  legible.
+- Las maquetas de servicio son decorativas y están marcadas como tales;
   ninguna información existe solo dentro de una animación.
 
 ## Rendimiento
 
-three.js, react-three-fiber, drei y GSAP suman más de un megabyte sin
-comprimir. Están detrás de fronteras de carga (`src/components/three/lazy.tsx`
-y un `import()` dinámico dentro de `useScrollProgress`), así que **no entran
-en el bundle inicial**: la primera carga sirve 608 KB de JavaScript sin
-comprimir en lugar de 1601 KB.
+El sitio **no tiene dependencias de terceros**: ni three.js, ni GSAP, ni
+librerías de animación. Todo el JavaScript del build son 628 KB sin
+comprimir, y prácticamente todo es React y Next; el código propio son
+unos pocos kilobytes.
 
-Además:
+Reglas que se siguen para que el scroll vaya a 60 fps:
 
-- Los canvas se montan cuando su sección se acerca al viewport y detienen
-  el bucle de render al salir de pantalla, sin perder el contexto WebGL.
-- El pixel ratio se limita a 2 (1.5 en pantallas táctiles).
-- La corona del sol es un único `InstancedMesh`: 200 piezas en una sola
-  llamada de dibujo.
+- Un solo `requestAnimationFrame` para toda la página, con las lecturas
+  (`getBoundingClientRect`) separadas de las escrituras (`style`).
+- Nunca `filter: blur()` sobre contenedores del tamaño de la pantalla:
+  colapsa la GPU. Las cortinas son divs con opacidad plana y el
+  difuminado del campo de fondo va en los topes del degradado.
+- Solo se anima `transform` y `opacity`. El campo de fondo deriva con
+  `translate3d`, nunca cambiando posición ni tamaño.
+- Las maquetas de servicio son DOM y CSS, no canvas.
 
 ## Sobre el stack propuesto
 
-Dos desviaciones respecto del brief, ambas deliberadas:
+Desviaciones respecto del brief original, todas deliberadas:
 
-- **Framer Motion no se instaló.** El único momento de carga orquestado
-  se resuelve con animaciones CSS, que pesan cero y respetan
-  `prefers-reduced-motion` sin código extra. Agregar Framer Motion
-  sumaría peso sin habilitar nada que no esté ya cubierto.
+- **No hay 3D.** El primer montaje usaba react-three-fiber para el sol
+  del hero y cinco escenas abstractas de servicio. Se sustituyeron por
+  maquetas de la interfaz que Kavento realmente construye —un navegador,
+  una tubería de automatización, una tarjeta de métrica, una
+  conversación y un panel de IA— montadas en vidrio. Muestran el
+  producto en lugar de decorar, y pesan cero.
+- **Framer Motion y GSAP no se instalaron.** El apilado, las cortinas y
+  el scroller horizontal están escritos a mano contra la API nativa del
+  DOM, igual que el portafolio que sirvió de referencia. Las
+  transiciones de la interfaz son CSS.
 - **La internacionalización no usa `next-intl`.** Su enfoque enruta por
   idioma (`/es`, `/en`), y navegar entre rutas pierde la posición de
-  scroll y desmonta los canvas 3D. El brief pedía explícitamente que el
+  scroll y rompe el apilado de secciones. El brief pedía que el
   conmutador no recargue ni pierda el scroll, así que se usa la
   alternativa que el propio brief autoriza: diccionarios JSON con un
   proveedor de cliente.

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Manrope } from "next/font/google";
+import { Figtree, Inter } from "next/font/google";
 import { cookies } from "next/headers";
 
 import {
@@ -9,17 +9,24 @@ import {
   LOCALE_COOKIE,
   type Locale,
 } from "@/lib/i18n/config";
+import { Atmosphere } from "@/components/ui/atmosphere";
+import { GlassFilters } from "@/components/ui/glass-filters";
 import { I18nProvider } from "@/lib/i18n/provider";
 import { serviceIds } from "@/lib/services";
 import { siteUrl, socialLinks } from "@/lib/site";
 
 import "./globals.css";
 
-/** Display: Manrope. Tracking cerrado a tamaños grandes, cálido y geométrico. */
-const manrope = Manrope({
+/**
+ * Display: Figtree. Geométrica-humanista, de la misma familia visual
+ * que la Google Sans Flex de tech-ish. Se usa en peso 500 a tamaños
+ * grandes: el peso 800 a 80px es justo lo que hace que una portada se
+ * lea como plantilla generada.
+ */
+const figtree = Figtree({
   subsets: ["latin"],
-  weight: ["500", "700", "800"],
-  variable: "--font-manrope",
+  weight: ["400", "500", "600"],
+  variable: "--font-figtree",
   display: "swap",
 });
 
@@ -103,7 +110,7 @@ export default async function RootLayout({
   const locale: Locale = isLocale(stored) ? stored : defaultLocale;
 
   return (
-    <html lang={locale} className={`${manrope.variable} ${inter.variable}`}>
+    <html lang={locale} className={`${figtree.variable} ${inter.variable}`}>
       <body>
         {/* Datos estructurados: solo hechos comprobables, sin inventar
             domicilio ni teléfono. */}
@@ -111,6 +118,8 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
+        <GlassFilters />
+        <Atmosphere />
         <I18nProvider initialLocale={locale}>{children}</I18nProvider>
       </body>
     </html>

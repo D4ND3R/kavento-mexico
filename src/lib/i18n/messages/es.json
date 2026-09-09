@@ -17,14 +17,22 @@
     "langEn": "Inglés"
   },
   "hero": {
-    "titleLine1": "Cualquier cosa digital.",
-    "titleLine2": "Tú la imaginas,",
-    "titleLine3": "nosotros la construimos.",
-    "lead": "Somos un equipo mexicano de desarrollo. Diseñamos y construimos sitios, aplicaciones, automatizaciones, chatbots e inteligencia artificial privada para empresas que necesitan algo hecho a su medida.",
+    "kicker": "Cualquier cosa digital.",
+    "titleLine1": "Tú lo imaginas.",
+    "titleLine2": "Nosotros lo construimos.",
+    "lead": "Somos un equipo mexicano. Construimos software a la medida, de punta a punta.",
     "ctaPrimary": "Cuéntanos qué necesitas",
     "ctaSecondary": "Ver qué hacemos",
     "scrollHint": "Desliza para conocernos",
-    "sunAlt": "Marca solar de Kavento animada en tres dimensiones"
+    "cardServicesLabel": "Qué construimos",
+    "cardServicesValue": "Cinco frentes",
+    "cardServicesNote": "Web, automatización, apps a la medida, chatbots e IA privada.",
+    "cardContactLabel": "Escríbenos",
+    "cardContactValue": "WhatsApp",
+    "cardContactNote": "Te respondemos el mismo día.",
+    "cardTeamLabel": "Quién lo hace",
+    "cardTeamValue": "Equipo mexicano",
+    "cardTeamNote": "Hablas directo con quien escribe el código."
   },
   "about": {
     "title": "¿A qué nos dedicamos?",
@@ -103,5 +111,24 @@
     "socialPlaceholder": "Marcador: agrega los perfiles reales",
     "rights": "Todos los derechos reservados.",
     "madeIn": "Hecho en México"
+  },
+  "mocks": {
+    "browserUrl": "kavento.mx",
+    "browserCta": "Cotizar",
+    "pipelineStep1": "Formulario",
+    "pipelineStep2": "Validación",
+    "pipelineStep3": "CRM",
+    "pipelineStep4": "WhatsApp",
+    "pipelineStatus": "Corriendo solo",
+    "deviceLabel": "Pedidos de hoy",
+    "deviceValue": "128",
+    "deviceDelta": "+18% contra ayer",
+    "chatIn1": "Hola, ¿cotizan instalaciones?",
+    "chatOut1": "Claro. ¿Para cuántos equipos?",
+    "chatIn2": "Doce.",
+    "chatTyping": "escribiendo",
+    "aiPrompt": "¿Cuánto vendimos en Puebla el mes pasado?",
+    "aiAnswer": "1,284,500 MXN en 312 pedidos.",
+    "aiPrivacy": "Tus datos no salen de tu servidor"
   }
 }
