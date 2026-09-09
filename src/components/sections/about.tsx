@@ -3,8 +3,9 @@
 import Image from "next/image";
 
 import { Crest } from "@/components/ui/crest";
-import { useTranslations } from "@/lib/i18n/provider";
+import { WhatsappGlyph } from "@/components/ui/whatsapp-glyph";
 import type { MessageKey } from "@/lib/i18n/config";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Fotografías de la sección.
@@ -44,6 +45,45 @@ const PHOTOS: {
   },
 ];
 
+type CardSpec = {
+  href: string;
+  label: MessageKey;
+  value: MessageKey;
+  note: MessageKey;
+  tone: "glass" | "ink" | "teal";
+  glyph?: boolean;
+};
+
+/**
+ * Las tres tarjetas hermanas de tech-ish. Vivían en la portada, pero
+ * ahí empujaban el contenido fuera de la primera pantalla; aquí abren
+ * la sección y siguen funcionando como índice.
+ */
+const CARDS: CardSpec[] = [
+  {
+    href: "#servicios",
+    label: "hero.cardServicesLabel",
+    value: "hero.cardServicesValue",
+    note: "hero.cardServicesNote",
+    tone: "glass",
+  },
+  {
+    href: "#contacto",
+    label: "hero.cardContactLabel",
+    value: "hero.cardContactValue",
+    note: "hero.cardContactNote",
+    tone: "ink",
+    glyph: true,
+  },
+  {
+    href: "#equipo",
+    label: "hero.cardTeamLabel",
+    value: "hero.cardTeamValue",
+    note: "hero.cardTeamNote",
+    tone: "teal",
+  },
+];
+
 export function About() {
   const t = useTranslations();
 
@@ -59,26 +99,82 @@ export function About() {
         ["--lit-y2" as string]: "78%",
       }}
     >
-      <Crest shape="loma" color="var(--bg-surface)" />
+      <Crest shape="rompiente" color="var(--bg-surface)" />
 
       <div className="u-shell">
-        <p className="t-eyebrow mb-5">{t("about.eyebrow")}</p>
-        <div className="lg:grid lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start lg:gap-16">
+        {/* Índice de tres tarjetas: al apuntar a una, las otras se apagan. */}
+        <ul
+          data-stagger
+          className="a-stagger grid gap-3 sm:grid-cols-3 [&:hover>li]:opacity-45"
+        >
+          {CARDS.map((card) => (
+            <li
+              key={card.href}
+              className="transition-opacity duration-[var(--dur-slow)] ease-[var(--ease-liquid)] hover:!opacity-100"
+            >
+              <a
+                href={card.href}
+                className={[
+                  "lg lg-motion lg-press lg-hover flex h-full flex-col justify-between gap-7 p-5 sm:p-6",
+                  "[--glass-radius:var(--r-card)]",
+                  card.tone === "ink" ? "[--glass-bg:rgba(10,8,6,0.6)]" : "",
+                  card.tone === "teal"
+                    ? "[--glass-bg:rgba(47,168,184,0.2)] [--glass-bloom:rgba(160,235,245,0.22)]"
+                    : "",
+                  card.tone === "glass" ? "lg--refract" : "",
+                ].join(" ")}
+              >
+                <span className="flex items-center justify-between gap-3 text-[0.8125rem] text-muted">
+                  {t(card.label)}
+                  {card.glyph ? (
+                    <span className="text-solar">
+                      <WhatsappGlyph size={18} />
+                    </span>
+                  ) : null}
+                </span>
+
+                <span>
+                  <span
+                    className="block text-[1.625rem] leading-none text-ink"
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      fontWeight: 700,
+                    }}
+                  >
+                    {t(card.value)}
+                  </span>
+                  <span className="mt-2.5 block text-[0.875rem] leading-snug text-muted">
+                    {t(card.note)}
+                  </span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        <p className="t-eyebrow mt-[clamp(4rem,9vh,7rem)]">
+          {t("about.eyebrow")}
+        </p>
+
+        <div className="mt-5 lg:grid lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start lg:gap-16">
           <h2 className="t-h2 max-w-[12ch]">{t("about.title")}</h2>
 
           <div className="mt-8 lg:mt-2">
             <p className="t-lead">{t("about.p1")}</p>
             <p className="t-body mt-6">{t("about.p2")}</p>
 
-            {/* La frase que cierra va en vidrio: es la única línea de
-                la sección que se sostiene sola. */}
-            <p className="lg lg--refract lg-motion mt-9 inline-block rounded-[var(--r-pill)] px-6 py-3.5 text-[1.0625rem] text-ink">
+            {/* La frase que cierra va en vidrio: es la única línea de la
+                sección que se sostiene sola. */}
+            <p className="lg lg--pill lg--refract lg-motion lg-hover mt-9 inline-block px-6 py-3.5 text-[1.0625rem] text-ink">
               {t("about.p3")}
             </p>
           </div>
         </div>
 
-        <div data-stagger className="a-stagger mt-16 grid gap-4 sm:grid-cols-2 lg:mt-8 lg:grid-cols-12 lg:gap-6">
+        <div
+          data-stagger
+          className="a-stagger mt-16 grid gap-4 sm:grid-cols-2 lg:mt-10 lg:grid-cols-12 lg:gap-6"
+        >
           {PHOTOS.map((photo) => (
             <figure
               key={photo.id}

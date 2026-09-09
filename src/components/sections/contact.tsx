@@ -75,7 +75,7 @@ export function Contact() {
         ["--lit-y2" as string]: "10%",
       }}
     >
-      <Crest shape="ola" color="var(--bg-surface)" />
+      <Crest shape="loma" color="var(--bg-surface)" />
 
       <div className="u-shell">
         <p className="t-eyebrow mb-5">{t("contact.eyebrow")}</p>

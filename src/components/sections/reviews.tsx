@@ -3,6 +3,7 @@
 import Image from "next/image";
 
 import { Crest } from "@/components/ui/crest";
+import { SplitText } from "@/components/ui/letters";
 import { useTranslations } from "@/lib/i18n/provider";
 import { reviews } from "@/lib/reviews";
 
@@ -37,13 +38,15 @@ export function Reviews() {
         ["--lit-b" as string]: "var(--glow-green)",
       }}
     >
-      <Crest shape="ola" color="var(--surface-green)" />
+      <Crest shape="desgarro" color="var(--surface-green)" />
 
       <div className="u-shell">
         <p className="t-eyebrow text-center" style={{ color: "var(--accent-green)" }}>
           {t("reviews.eyebrow")}
         </p>
-        <h2 className="t-h2 mt-3 text-center">{t("reviews.title")}</h2>
+        <h2 className="t-h2 mt-3 text-center" data-stagger>
+          <SplitText text={t("reviews.title")} reveal />
+        </h2>
         <p className="t-lead mx-auto mt-5 max-w-[52ch] text-center">
           {t("reviews.lead")}
         </p>

@@ -11,6 +11,8 @@ import {
 } from "@/lib/i18n/config";
 import { Atmosphere } from "@/components/ui/atmosphere";
 import { GlassFilters } from "@/components/ui/glass-filters";
+import { PointerFx } from "@/components/ui/pointer-fx";
+import { SmoothScroll } from "@/components/ui/smooth-scroll";
 import { I18nProvider } from "@/lib/i18n/provider";
 import { serviceIds } from "@/lib/services";
 import { siteUrl, socialLinks } from "@/lib/site";
@@ -126,6 +128,8 @@ export default async function RootLayout({
         />
         <GlassFilters />
         <Atmosphere />
+        <SmoothScroll />
+        <PointerFx />
         <I18nProvider initialLocale={locale}>{children}</I18nProvider>
       </body>
     </html>

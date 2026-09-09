@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { ServiceMock } from "@/components/mocks/service-mocks";
+import { SplitText } from "@/components/ui/letters";
 import { Crest } from "@/components/ui/crest";
 import { useTranslations } from "@/lib/i18n/provider";
 import {
@@ -140,7 +141,9 @@ export function Services() {
       <div className="u-shell">
         <p className="t-eyebrow">{t("services.eyebrow")}</p>
         <div className="mt-5 lg:flex lg:items-end lg:justify-between lg:gap-16">
-          <h2 className="t-h2 max-w-[14ch]">{t("services.title")}</h2>
+          <h2 className="t-h2 max-w-[14ch]" data-stagger data-reveal>
+            <SplitText text={t("services.title")} reveal />
+          </h2>
           <p className="t-lead mt-5 lg:mt-0 lg:max-w-[34ch] lg:text-right">
             {t("services.lead")}
           </p>
@@ -158,13 +161,18 @@ export function Services() {
           onPointerUp={onPointerUp}
         >
           <div ref={trackRef} className="deck__track">
+            {/*
+              Las tarjetas van sólidas y sin refracción. Una tarjeta de
+              vidrio con más vidrio dentro difumina lo ya difuminado y el
+              producto acaba viéndose borroso.
+            */}
             {serviceIds.map((id, index) => (
               <article
                 key={id}
                 data-card
                 id={serviceAnchor(id)}
                 onClick={() => setActive(index)}
-                className="deck__card lg lg--panel lg--refract flex flex-col"
+                className="deck__card lg lg--solid flex flex-col"
               >
                 <div className="min-h-0 flex-1 p-3">
                   <ServiceMock id={id} />

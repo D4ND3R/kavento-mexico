@@ -63,15 +63,15 @@ function Live({ color = "var(--accent-to)" }: { color?: string }) {
 function BrowserMock() {
   const t = useTranslations();
   return (
-    <div className="lg lg--panel lg--refract flex h-full w-full flex-col overflow-hidden p-3">
+    <div className="lg lg--plain lg--flush flex h-full w-full flex-col overflow-hidden p-3">
       <div className="flex shrink-0 items-center gap-3 px-1 pb-3">
         <Dots />
-        <span className="lg lg--flush flex-1 rounded-[var(--r-pill)] px-3 py-1.5 text-center text-[0.6875rem] text-muted">
+        <span className="lg lg--plain lg--flush flex-1 rounded-[var(--r-pill)] px-3 py-1.5 text-center text-[0.6875rem] text-muted">
           {t("mocks.browserUrl")}
         </span>
       </div>
 
-      <div className="lg lg--flush flex flex-1 flex-col overflow-hidden rounded-[var(--r-card)] p-4">
+      <div className="lg lg--plain lg--flush flex flex-1 flex-col overflow-hidden rounded-[var(--r-card)] p-4">
         <div
           className="min-h-16 w-full flex-[1] rounded-[10px]"
           style={{
@@ -117,7 +117,7 @@ function PipelineMock() {
   ];
 
   return (
-    <div className="lg lg--panel lg--refract flex h-full w-full flex-col justify-center gap-5 p-5 sm:p-7">
+    <div className="lg lg--plain lg--flush flex h-full w-full flex-col justify-center gap-5 p-5 sm:p-7">
       <span className="flex items-center gap-2 text-[0.75rem] text-muted">
         <Live />
         {t("mocks.pipelineStatus")}
@@ -126,7 +126,7 @@ function PipelineMock() {
       <ol className="flex flex-col gap-0">
         {steps.map((step, i) => (
           <li key={step}>
-            <div className="lg lg--flush flex items-center gap-3 rounded-[var(--r-card)] px-3.5 py-3">
+            <div className="lg lg--plain lg--flush flex items-center gap-3 rounded-[var(--r-card)] px-3.5 py-3">
               <span
                 className="size-1.5 shrink-0 rounded-full"
                 style={{
@@ -162,11 +162,11 @@ function DeviceMock() {
   const t = useTranslations();
   return (
     <div className="flex h-full w-full items-center justify-center">
-      <div className="lg lg--panel lg--refract w-[15rem] max-w-full overflow-hidden p-3">
+      <div className="lg lg--plain lg--flush w-[15rem] max-w-full overflow-hidden p-3">
         {/* Isla superior del dispositivo */}
         <span className="mx-auto mb-3 block h-1.5 w-14 rounded-full bg-[rgba(255,244,232,0.2)]" />
 
-        <div className="lg lg--flush rounded-[var(--r-card)] p-4">
+        <div className="lg lg--plain lg--flush rounded-[var(--r-card)] p-4">
           <span className="block text-[0.6875rem] text-muted">
             {t("mocks.deviceLabel")}
           </span>
@@ -225,7 +225,7 @@ function DeviceMock() {
 function ChatMock() {
   const t = useTranslations();
   return (
-    <div className="lg lg--panel lg--refract flex h-full w-full flex-col justify-center gap-3 p-5 sm:p-7">
+    <div className="lg lg--plain lg--flush flex h-full w-full flex-col justify-center gap-3 p-5 sm:p-7">
       <span className="mb-1 flex items-center gap-2 text-[0.75rem] text-muted">
         <span className="text-teal">
           <WhatsappGlyph size={15} />
@@ -264,7 +264,7 @@ function Bubble({
   return (
     <span
       className={[
-        "lg lg--flush max-w-[86%] px-3.5 py-2.5 text-[0.8125rem] leading-snug",
+        "lg lg--plain lg--flush max-w-[86%] px-3.5 py-2.5 text-[0.8125rem] leading-snug",
         out
           ? "self-end rounded-2xl rounded-br-md text-[#04191e] [--glass-tint:rgba(47,168,184,0.82)]"
           : "self-start rounded-2xl rounded-bl-md text-ink",
@@ -281,8 +281,8 @@ function Bubble({
 function AiMock() {
   const t = useTranslations();
   return (
-    <div className="lg lg--panel lg--refract flex h-full w-full flex-col justify-center gap-4 p-5 sm:p-7">
-      <span className="lg lg--flush block rounded-[var(--r-card)] px-3.5 py-3 text-[0.8125rem] text-muted">
+    <div className="lg lg--plain lg--flush flex h-full w-full flex-col justify-center gap-4 p-5 sm:p-7">
+      <span className="lg lg--plain lg--flush block rounded-[var(--r-card)] px-3.5 py-3 text-[0.8125rem] text-muted">
         {t("mocks.aiPrompt")}
       </span>
 

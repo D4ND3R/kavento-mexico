@@ -119,13 +119,65 @@
   /* Variantes ---------------------------------------------------- */
 
   /* Deja salir a los hijos. `overflow: hidden` recorta las gotas del
-     filtro líquido y los menús desplegables. */
+     filtro líquido y los menús desplegables. Al dejar de recortar, los
+     filos rectos se escaparían de la caja, así que se apagan. */
   .lg--open {
     overflow: visible;
   }
 
+  .lg--open::after {
+    content: none;
+  }
+
+  /* Sin desenfoque de fondo.
+     Un `backdrop-filter` dentro de otro difumina lo ya difuminado y el
+     contenido acaba ilegible. Las piezas que van DENTRO de una tarjeta
+     de vidrio usan esta variante: conservan el tinte y los cantos, pero
+     no vuelven a desenfocar. */
+  .lg--plain {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  /* Pastilla.
+     Los filos rectos de ::before y ::after están pensados para una
+     tarjeta de esquinas suaves; sobre un radio de 999px la línea de 1px
+     se sale de la curva y asoma como un palito suelto. En pastillas se
+     apagan y el brillo del canto se hace con un aro que SÍ sigue el
+     radio, recortado con mask-composite. */
   .lg--pill {
     --glass-radius: 999px;
+  }
+
+  .lg--pill::before {
+    content: "";
+    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: auto;
+    height: auto;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      140deg,
+      var(--glass-filo) 0%,
+      rgba(255, 255, 255, 0.08) 30%,
+      rgba(255, 255, 255, 0) 58%,
+      rgba(255, 255, 255, 0.28) 100%
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+  }
+
+  .lg--pill::after {
+    content: none;
   }
 
   /* Panel grande: más blur y menos floración, porque lleva texto. */

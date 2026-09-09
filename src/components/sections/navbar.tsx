@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { LanguageToggle } from "@/components/ui/language-toggle";
-import { Logo } from "@/components/ui/logo";
+import { SolarMark } from "@/components/ui/logo";
 import { useTranslations } from "@/lib/i18n/provider";
 import { navSections } from "@/lib/site";
 
@@ -63,9 +63,11 @@ export function Navbar() {
           <a
             href="#top"
             aria-label="Kavento México"
-            className="lg lg--pill lg--refract lg-motion lg-press flex items-center gap-2.5 px-3.5 py-2.5"
+            className="lg lg--pill lg--refract lg-motion lg-press lg-hover flex size-12 items-center justify-center"
           >
-            <Logo />
+            {/* Solo el disco: el wordmark completo repetía lo que ya dice
+                el título de la pestaña y ensanchaba la barra. */}
+            <SolarMark size={26} />
           </a>
 
           {/* Pastilla central: estado + enlaces colapsables. */}

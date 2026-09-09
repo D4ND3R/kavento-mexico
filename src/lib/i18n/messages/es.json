@@ -20,7 +20,7 @@
     "next": "Siguiente"
   },
   "hero": {
-    "kicker": "Soluciones Digitales Kavento México",
+    "kicker": "Kavento — Soluciones Digitales",
     "titleLine1": "Construimos tecnología que",
     "lead": "Somos un equipo mexicano. Construimos software a la medida, de punta a punta.",
     "ctaPrimary": "Cuéntanos qué necesitas",
@@ -38,7 +38,9 @@
     "word1": "Escala",
     "word2": "Automatiza",
     "word3": "Vende",
-    "word4": "Aguanta"
+    "word4": "Aguanta",
+    "place": "Ciudad de México · Remoto",
+    "vertical": "Software a la medida"
   },
   "about": {
     "title": "¿A qué nos dedicamos?",

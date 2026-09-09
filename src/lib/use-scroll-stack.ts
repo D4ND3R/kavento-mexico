@@ -31,13 +31,24 @@ function ease(t: number): number {
 const SHADE_MAX = 0.55;
 
 /**
- * La cortina no arranca hasta que la sección de encima ha subido un
- * 22% de la pantalla, y tarda 1.6 pantallas en cerrar del todo. Antes
- * cubría en una sola pantalla y el cruce pasaba demasiado rápido para
- * leerse.
+ * La cortina no arranca hasta que la sección de encima ha subido más
+ * de media pantalla, y tarda 1.5 pantallas en cerrar del todo. Con el
+ * valor anterior (0.22) empezaba a oscurecer cuando la sección apenas
+ * asomaba, y el cruce se sentía adelantado.
  */
-const CURTAIN_START = 0.22;
-const CURTAIN_SPAN = 1.6;
+const CURTAIN_START = 0.55;
+const CURTAIN_SPAN = 1.5;
+
+/**
+ * El campo de fondo tampoco se abre desde el primer píxel de scroll:
+ * espera a que el hero haya subido un tercio de pantalla.
+ */
+const FIELD_START = 0.32;
+const FIELD_SPAN = 0.95;
+
+/** El abanico de reseñas se abre cuando la sección ya entró de verdad. */
+const FAN_START = 0.45;
+const FAN_SPAN = 0.6;
 
 /** Umbral y espera de la navbar, del portafolio. */
 const NAV_DELTA = 8;
@@ -96,7 +107,8 @@ export function useScrollStack() {
           }
         }
       },
-      { rootMargin: "0px 0px -12% 0px", threshold: 0.15 },
+      // Se espera a que el bloque entre de verdad, no a que asome.
+      { rootMargin: "0px 0px -25% 0px", threshold: 0.2 },
     );
 
     for (const node of staggerNodes) staggerObserver.observe(node);
@@ -155,12 +167,13 @@ export function useScrollStack() {
 
       // Abanico de reseñas.
       for (let i = 0; i < fans.length; i += 1) {
-        const spread = ease((vh * 0.85 - fanTops[i]) / (vh * 0.7));
+        const entered = (vh - fanTops[i]) / vh;
+        const spread = ease((entered - FAN_START) / FAN_SPAN);
         fans[i].style.setProperty("--spread", spread.toFixed(3));
       }
 
       // Campo de fondo del hero.
-      const curtain = Math.min(Math.max(-tops[0] / vh, 0), 1);
+      const curtain = ease((-tops[0] / vh - FIELD_START) / FIELD_SPAN);
       document.documentElement.style.setProperty(
         "--curtain",
         curtain.toFixed(4),

@@ -20,7 +20,7 @@
     "next": "Next"
   },
   "hero": {
-    "kicker": "Soluciones Digitales Kavento México",
+    "kicker": "Kavento — Digital Solutions",
     "titleLine1": "We build technology that",
     "lead": "We are a Mexican team. We build software made to fit, end to end.",
     "ctaPrimary": "Tell us what you need",
@@ -38,7 +38,9 @@
     "word1": "Scales",
     "word2": "Automates",
     "word3": "Sells",
-    "word4": "Holds up"
+    "word4": "Holds up",
+    "place": "Mexico City · Remote",
+    "vertical": "Software made to fit"
   },
   "about": {
     "title": "What we do",

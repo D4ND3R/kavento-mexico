@@ -41,7 +41,9 @@ export function Team() {
         <p className="t-eyebrow">{t("team.eyebrow")}</p>
 
         <div className="mt-5 lg:flex lg:items-end lg:justify-between lg:gap-16">
-          <h2 className="t-h2 max-w-[10ch]">{t("team.title")}</h2>
+          <h2 className="t-h2 max-w-[10ch]" data-stagger>
+            <SplitText text={t("team.title")} reveal />
+          </h2>
           <p className="t-lead mt-5 lg:mt-0 lg:max-w-[36ch] lg:text-right">
             {t("team.lead")}
           </p>

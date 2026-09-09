@@ -106,7 +106,9 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* El scroll suave lo maneja Lenis. `scroll-behavior: smooth` de CSS
+     pelea con él: los dos intentan animar el mismo scroll. */
+  scroll-behavior: auto;
   scroll-padding-top: 6rem;
   -webkit-text-size-adjust: 100%;
   background-color: var(--bg-primary);
@@ -217,7 +219,8 @@ body {
 .roll-track {
   display: block;
   transition: transform 450ms var(--ease-spring);
-  will-change: transform;
+  /* Sin `will-change`: promover la pista a su propia capa la saca del
+     recorte del contenedor y deja asomar la palabra vecina. */
 }
 
 .roll-word {
@@ -246,9 +249,18 @@ body {
   color: var(--accent-to);
 }
 
-/* Espacios: no deben capturar el cursor ni colapsar. */
-.h-letter[data-space="true"] {
-  width: 0.3em;
+/* La palabra es la unidad indivisible: dentro se parte en letras, pero
+   la palabra entera no se rompe. */
+.h-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/* El espacio entre palabras vive FUERA del nowrap para que ahí sí se
+   pueda cortar la línea. */
+.h-space {
+  display: inline-block;
+  width: 0.28em;
   pointer-events: none;
 }
 
@@ -941,4 +953,217 @@ body[data-loading="true"] {
 .stack--pad-wide {
   padding-top: var(--section-y-wide);
   padding-bottom: calc(var(--section-y-wide) + clamp(5rem, 9vw, 9rem));
+}
+
+/* ============================================================
+   Sol de la pantalla de carga
+   El degradado solar se pinta en un cuadrado y el clip-path lo
+   convierte en la figura del sol, así que la marca se llena con
+   el mismo degradado del logotipo.
+   ============================================================ */
+
+.loader__sun {
+  display: block;
+  /* El recorte del sol ocupa el 70% de la caja, así que la caja va
+     bastante más grande que el sol que se ve. */
+  width: clamp(8rem, 17vw, 13rem);
+  aspect-ratio: 1;
+  animation: loader-sun-turn 9s linear infinite;
+}
+
+.loader__sun-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--accent-gradient);
+  clip-path: url(#loader-sun-clip);
+  animation: loader-sun-pulse 2.4s var(--ease-out-expo) infinite alternate;
+}
+
+@keyframes loader-sun-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes loader-sun-pulse {
+  from {
+    transform: scale(0.9);
+    opacity: 0.82;
+  }
+  to {
+    transform: scale(1.04);
+    opacity: 1;
+  }
+}
+
+/* ============================================================
+   Cursor propio
+   El punto va pegado y el aro persigue con retraso. Se oculta el
+   cursor del sistema solo cuando las piezas están montadas, para
+   no dejar a nadie sin puntero si el script falla.
+   ============================================================ */
+
+body[data-cursor="custom"],
+body[data-cursor="custom"] * {
+  cursor: none;
+}
+
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 240ms ease;
+}
+
+.cursor-dot[data-on="true"],
+.cursor-ring[data-on="true"] {
+  opacity: 1;
+}
+
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--accent-to);
+}
+
+.cursor-ring {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 244, 232, 0.45);
+  transition:
+    opacity 240ms ease,
+    width 380ms var(--ease-liquid),
+    height 380ms var(--ease-liquid),
+    border-color 380ms ease,
+    background-color 380ms ease;
+}
+
+/* Sobre algo interactivo el aro crece y se tiñe. */
+.cursor-ring[data-active="true"] {
+  width: 58px;
+  height: 58px;
+  border-color: var(--accent-to);
+  background-color: rgba(255, 201, 74, 0.1);
+}
+
+/* Al presionar se aprieta. */
+.cursor-ring[data-press="true"] {
+  width: 26px;
+  height: 26px;
+  border-color: var(--accent-from);
+  transition-duration: 140ms;
+}
+
+/* Onda de clic. */
+.cursor-ripple {
+  position: fixed;
+  z-index: 9997;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 999px;
+  border: 1px solid var(--accent-to);
+  pointer-events: none;
+  animation: cursor-ripple 620ms var(--ease-out-expo) forwards;
+}
+
+@keyframes cursor-ripple {
+  from {
+    transform: scale(0.4);
+    opacity: 0.85;
+  }
+  to {
+    transform: scale(7);
+    opacity: 0;
+  }
+}
+
+/* ============================================================
+   Más movimiento
+   ============================================================ */
+
+/* Flotación lenta y desfasada, para piezas sueltas del hero. */
+@keyframes kv-float {
+  from {
+    transform: translateY(-7px);
+  }
+  to {
+    transform: translateY(7px);
+  }
+}
+
+.a-float {
+  animation: kv-float 6s var(--ease-out-expo) infinite alternate;
+}
+
+/* Micro-texto vertical del portafolio, girado sobre su eje. */
+.a-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  letter-spacing: 0.32em;
+}
+
+/* Revelado de bloque: una barra barre y descubre el contenido. */
+@keyframes kv-sweep {
+  0% {
+    clip-path: inset(0 100% 0 0);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.a-sweep {
+  animation: kv-sweep 900ms var(--ease-liquid) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .a-float,
+  .loader__sun,
+  .loader__sun-fill {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   Revelado del titular letra por letra
+   El escalonado va por variable CSS: cada letra lleva su índice
+   y de ahí sale el retraso. Así no hacen falta cien reglas
+   nth-child ni un temporizador por letra.
+   ============================================================ */
+
+.h-letter--reveal {
+  opacity: 0;
+  transform: translateY(0.5em) rotate(4deg);
+  transition:
+    opacity 620ms var(--ease-liquid),
+    transform 620ms var(--ease-spring),
+    color 260ms ease;
+  transition-delay: calc(var(--i, 0) * 22ms);
+}
+
+[data-inview="true"] .h-letter--reveal {
+  opacity: 1;
+  transform: none;
+}
+
+/* El hover sigue funcionando una vez revelada. */
+[data-inview="true"] .h-letter--reveal:hover {
+  transform: translateY(-0.14em) scale(1.12);
+  transition-delay: 0ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .h-letter--reveal {
+    opacity: 1;
+    transform: none;
+  }
 }
