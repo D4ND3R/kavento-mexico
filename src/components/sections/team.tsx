@@ -5,8 +5,20 @@ import { useCallback, useRef } from "react";
 
 import { Crest } from "@/components/ui/crest";
 import { SplitText } from "@/components/ui/letters";
+import { Watermark } from "@/components/ui/watermark";
+import type { MessageKey } from "@/lib/i18n/config";
 import { useTranslations } from "@/lib/i18n/provider";
 import { team } from "@/lib/team";
+
+const TAPE: MessageKey[] = [
+  "team.tape1",
+  "team.tape2",
+  "team.tape3",
+  "team.tape4",
+  "team.tape5",
+  "team.tape6",
+  "team.tape7",
+];
 
 /**
  * Equipo.
@@ -17,11 +29,18 @@ import { team } from "@/lib/team";
  * el manejador de puntero y se escribe directo al DOM, así que mover el
  * cursor no provoca ni un render de React.
  *
- * Las tarjetas entran escalonadas con `data-stagger`, y el nombre se
- * parte en letras para que reaccione una por una.
+ * Movimiento de la sección:
+ *   · las tarjetas entran escalonadas (`data-stagger`) y después
+ *     flotan despacio, cada una con su desfase (`--i`)
+ *   · el nombre hace la ola letra a letra al pasar el cursor
+ *   · el retrato sin foto lleva un brillo que recorre el vidrio
+ *   · debajo corre una cinta con lo que hace el equipo, que se
+ *     detiene al pasar el cursor
+ *   · todo deriva hacia el cursor (`data-drift`)
  */
 export function Team() {
   const t = useTranslations();
+  const tape = TAPE.map((key) => t(key));
 
   return (
     <section
@@ -35,16 +54,22 @@ export function Team() {
         ["--lit-y2" as string]: "82%",
       }}
     >
-      <Crest shape="duna" color="var(--bg-primary)" />
+      <Crest shape="duna" />
+      <Watermark>{t("marks.team")}</Watermark>
 
       <div className="u-shell">
-        <p className="t-eyebrow">{t("team.eyebrow")}</p>
+        <p className="t-eyebrow" data-drift="6">
+          {t("team.eyebrow")}
+        </p>
 
         <div className="mt-5 lg:flex lg:items-end lg:justify-between lg:gap-16">
-          <h2 className="t-h2 max-w-[10ch]" data-stagger>
+          <h2 className="t-h2 max-w-[10ch]" data-stagger data-drift="12">
             <SplitText text={t("team.title")} reveal />
           </h2>
-          <p className="t-lead mt-5 lg:mt-0 lg:max-w-[36ch] lg:text-right">
+          <p
+            className="t-lead mt-5 lg:mt-0 lg:max-w-[36ch] lg:text-right"
+            data-drift="8"
+          >
             {t("team.lead")}
           </p>
         </div>
@@ -53,9 +78,10 @@ export function Team() {
           data-stagger
           className="a-stagger mt-[clamp(3rem,7vh,5rem)] grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4 lg:gap-6"
         >
-          {team.map((member) => (
+          {team.map((member, i) => (
             <TeamCard
               key={member.id}
+              index={i}
               photo={member.photo}
               name={member.name ?? t("team.namePlaceholder")}
               role={member.role ?? t("team.rolePlaceholder")}
@@ -66,16 +92,33 @@ export function Team() {
 
         <p className="mt-10 text-[0.8125rem] text-faint">{t("team.note")}</p>
       </div>
+
+      {/* Cinta: dos copias seguidas para que el bucle no tenga costura. */}
+      <div className="marquee mt-[clamp(3rem,8vh,6rem)]" aria-hidden="true">
+        <div className="marquee__track">
+          {[0, 1].map((copy) =>
+            tape.map((word, i) => (
+              <span key={`${copy}-${i}`} className="marquee__item">
+                {word}
+                <span className="marquee__dot" />
+              </span>
+            )),
+          )}
+        </div>
+      </div>
+      <p className="sr-only">{tape.join(", ")}</p>
     </section>
   );
 }
 
 function TeamCard({
+  index,
   photo,
   name,
   role,
   portraitAlt,
 }: {
+  index: number;
   photo: string | null;
   name: string;
   role: string;
@@ -105,12 +148,16 @@ function TeamCard({
 
   return (
     <li>
-      <article className="group">
+      <article
+        className="group team-card"
+        style={{ ["--i" as string]: index }}
+        data-drift={10 + (index % 2) * 4}
+      >
         <div
           ref={frameRef}
           onPointerMove={tilt}
           onPointerLeave={rest}
-          className="team-frame lg lg--refract lg-motion relative"
+          className={`team-frame lg lg--refract lg-motion relative ${photo ? "" : "team-empty"}`}
         >
           {photo ? (
             <Image
@@ -131,12 +178,12 @@ function TeamCard({
         </div>
 
         <h3
-          className="mt-4 text-[1.0625rem] leading-tight text-ink"
+          className="team-name mt-4 text-[1.0625rem] leading-tight text-ink"
           style={{ fontFamily: "var(--font-display)", fontWeight: 700 }}
         >
-          <SplitText text={name} />
+          <SplitText text={name} reveal />
         </h3>
-        <p className="mt-1 text-[0.9375rem] text-muted">{role}</p>
+        <p className="team-role mt-1 text-[0.9375rem] text-muted">{role}</p>
       </article>
     </li>
   );

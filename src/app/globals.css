@@ -288,15 +288,19 @@ body {
 .stack {
   position: sticky;
   top: 0;
-  background-color: var(--bg-primary);
+  /* El color lo pinta .stack__light (ver más abajo), no la sección:
+     así el fondo puede extenderse por encima del borde superior con
+     la silueta de la cresta. */
+  background-color: transparent;
+  --stack-bg: var(--bg-primary);
 }
 
 .stack--alt {
-  background-color: var(--bg-surface);
+  --stack-bg: var(--bg-surface);
 }
 
 .stack--green {
-  background-color: var(--surface-green);
+  --stack-bg: var(--surface-green);
 }
 
 .stack-1 { z-index: 1; }
@@ -306,15 +310,35 @@ body {
 .stack-5 { z-index: 13; }
 .stack-6 { z-index: 14; }
 
-/* Cada carta lleva su propia luz local: sin algo con estructura
-   detrás, el vidrio no refracta nada. */
-.stack::before {
-  content: "";
+/* ============================================================
+   Luz de la carta y cresta (cortinas no lineales)
+
+   Cada carta lleva su propia luz local: sin algo con estructura
+   detrás, el vidrio no refracta nada. Esa luz y el color de fondo van
+   en un solo elemento que sobresale por arriba tanto como mide la
+   cresta y se recorta con una máscara: la silueta arriba y un
+   rectángulo debajo. El degradado cruza el filo sin cortarse, así que
+   no hay ninguna línea recta entre la cresta y la sección.
+
+   El alto de la cresta sale del viewBox del SVG (1440×200) y del ancho
+   de la ventana. Las dos capas de la máscara se solapan un píxel para
+   que no asome una costura por el antialias.
+   ============================================================ */
+
+.stack {
+  --crest-h: calc(100vw * 200 / 1440);
+}
+
+.stack > .stack__light {
   position: absolute;
-  inset: 0;
   z-index: 0;
+  left: 0;
+  right: 0;
+  top: calc(-1 * var(--crest-h));
+  bottom: 0;
   pointer-events: none;
-  background:
+  background-color: var(--stack-bg);
+  background-image:
     radial-gradient(
       42% 38% at var(--lit-x, 78%) var(--lit-y, 22%),
       var(--lit-a, var(--glow-warm)) 0%,
@@ -325,6 +349,21 @@ body {
       var(--lit-b, var(--glow-teal)) 0%,
       transparent 72%
     );
+  -webkit-mask-image: var(--crest-mask), linear-gradient(#000, #000);
+  mask-image: var(--crest-mask), linear-gradient(#000, #000);
+  -webkit-mask-size: 100% var(--crest-h), 100% calc(100% - var(--crest-h) + 1px);
+  mask-size: 100% var(--crest-h), 100% calc(100% - var(--crest-h) + 1px);
+  -webkit-mask-position: 0 0, 0 calc(var(--crest-h) - 1px);
+  mask-position: 0 0, 0 calc(var(--crest-h) - 1px);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* Sin cresta (no debería pasar): la luz ocupa solo la sección. */
+.stack > .stack__light:not([style*="--crest-mask"]) {
+  top: 0;
+  -webkit-mask-image: none;
+  mask-image: none;
 }
 
 /* El contenido va por encima de esa luz. Las cortinas llevan su
@@ -332,34 +371,6 @@ body {
 .stack > * {
   position: relative;
   z-index: 1;
-}
-
-/* ============================================================
-   Cortinas no lineales (crestas)
-   El corte entre secciones no es una recta: cada sección lleva una
-   cresta orgánica arriba, del color de la propia sección, que se
-   monta sobre la anterior. Es la mecánica de `.t-wavy-crest` del
-   portafolio, dibujada en SVG en lugar de con un PNG.
-   ============================================================ */
-
-.crest {
-  position: absolute;
-  /* Exactamente el ancho de la sección: cualquier desbordamiento hace
-     que la página reporte contenido más ancho que la pantalla, y
-     Lighthouse lo marca aunque no se pueda desplazar. */
-  left: 0;
-  width: 100%;
-  bottom: calc(100% - 2px);
-  z-index: 2;
-  pointer-events: none;
-  display: block;
-  line-height: 0;
-}
-
-.crest svg {
-  display: block;
-  width: 100%;
-  height: auto;
 }
 
 /* Cortina elíptica: la técnica de palmo
@@ -1338,5 +1349,267 @@ body[data-cursor="custom"] * {
   .journey__line,
   .journey__stage-line {
     filter: none !important;
+  }
+}
+
+/* ============================================================
+   Hover que fluye
+   La etiqueta sube y sale por arriba mientras una copia entra por
+   abajo (botones de altitude101). Lo dispara el ancestro .flow-host.
+   El destello (.sheen) es un hijo aparte porque .lg ya gasta sus dos
+   pseudoelementos en los filos del vidrio.
+   ============================================================ */
+
+.flow {
+  display: inline-grid;
+  overflow: hidden;
+  vertical-align: bottom;
+  line-height: inherit;
+}
+
+.flow > span {
+  grid-area: 1 / 1;
+  display: block;
+  white-space: nowrap;
+  transition: transform 560ms var(--ease-liquid);
+}
+
+.flow > span:last-child {
+  transform: translateY(118%);
+}
+
+.flow-host:hover .flow > span:first-child,
+.flow-host:focus-visible .flow > span:first-child {
+  transform: translateY(-118%);
+}
+
+.flow-host:hover .flow > span:last-child,
+.flow-host:focus-visible .flow > span:last-child {
+  transform: none;
+}
+
+.sheen {
+  position: absolute;
+  inset: -20% -40%;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    rgba(255, 246, 236, 0.16) 48%,
+    rgba(255, 246, 236, 0.28) 50%,
+    rgba(255, 246, 236, 0.16) 52%,
+    transparent 62%
+  );
+  transform: translateX(-70%) skewX(-8deg);
+  transition: transform 0s;
+}
+
+.flow-host:hover .sheen,
+.flow-host:focus-visible .sheen {
+  transform: translateX(70%) skewX(-8deg);
+  transition: transform 1100ms var(--ease-liquid);
+}
+
+/* El texto y los iconos del botón quedan por encima del destello. */
+.flow-host > :not(.sheen) {
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================
+   Deriva hacia el cursor
+   Cada [data-drift] se desplaza un poco hacia donde está el cursor
+   (paralaje: texto y fotos "miran" al puntero) y cada [data-magnet]
+   además se deja atraer cuando el cursor está cerca. Lo escribe el
+   sistema de puntero en la propiedad `translate`, que se compone con
+   cualquier `transform` que el elemento ya tenga.
+   ============================================================ */
+
+[data-drift],
+[data-magnet] {
+  transition: translate 640ms var(--ease-liquid);
+  will-change: translate;
+}
+
+/* ============================================================
+   Marca de agua
+   Una palabra enorme en trazo, casi invisible, detrás de cada carta:
+   el eco tipográfico del KAVENTO 3D de la portada. Deriva con el
+   cursor más que el resto, para que se sienta lejos.
+   ============================================================ */
+
+.watermark {
+  position: absolute;
+  z-index: 0;
+  right: calc(-0.08 * var(--gutter));
+  top: clamp(1rem, 6vh, 4rem);
+  margin: 0;
+  pointer-events: none;
+  user-select: none;
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(6rem, 17vw, 18rem);
+  line-height: 0.85;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--watermark-ink, rgba(255, 244, 232, 0.1));
+  opacity: 0.85;
+}
+
+.stack--green .watermark {
+  --watermark-ink: rgba(112, 180, 148, 0.16);
+}
+
+@media (max-width: 767px) {
+  .watermark {
+    font-size: clamp(3rem, 14vw, 7rem);
+    right: 0;
+  }
+}
+
+/* ============================================================
+   Equipo: más vida en las tarjetas
+   Flotan despacio con desfase, el nombre hace la ola letra a letra al
+   pasar el cursor, el rol se desliza y el retrato sin foto lleva un
+   brillo que recorre el vidrio. Debajo, una cinta de valores que
+   corre sin fin.
+   ============================================================ */
+
+.team-card {
+  animation: kv-float 7s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * -1.7s);
+}
+
+.group:hover .team-name .h-letter,
+.group:focus-within .team-name .h-letter {
+  animation: team-wave 720ms var(--ease-spring) both;
+  animation-delay: calc(var(--i, 0) * 34ms);
+  color: var(--accent-to);
+}
+
+@keyframes team-wave {
+  0% {
+    transform: translateY(0);
+  }
+  38% {
+    transform: translateY(-0.28em) scale(1.08);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.team-role {
+  transition:
+    transform 520ms var(--ease-liquid),
+    color 320ms ease;
+}
+
+.group:hover .team-role {
+  transform: translateX(0.35rem);
+  color: var(--text-muted-hi);
+}
+
+.team-empty::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    112deg,
+    transparent 30%,
+    rgba(255, 201, 74, 0.09) 47%,
+    rgba(255, 122, 26, 0.12) 52%,
+    transparent 70%
+  );
+  transform: translateX(-100%);
+  animation: team-shimmer 4.6s var(--ease-liquid) infinite;
+  animation-delay: calc(var(--i, 0) * -1.1s);
+}
+
+@keyframes team-shimmer {
+  0%,
+  18% {
+    transform: translateX(-100%);
+  }
+  62%,
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+.marquee__track {
+  display: flex;
+  width: max-content;
+  gap: 0;
+  animation: marquee 38s linear infinite;
+}
+
+.marquee:hover .marquee__track {
+  animation-play-state: paused;
+}
+
+.marquee__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding-right: 1.25rem;
+  white-space: nowrap;
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.75rem, 3.6vw, 3rem);
+  letter-spacing: -0.03em;
+  color: var(--text-faint);
+  transition: color 400ms ease;
+}
+
+.marquee__item:hover {
+  color: var(--accent-to);
+}
+
+.marquee__dot {
+  display: inline-block;
+  width: 0.4em;
+  height: 0.4em;
+  border-radius: 50%;
+  background: var(--accent-gradient);
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow > span,
+  .sheen,
+  [data-drift],
+  [data-magnet] {
+    transition: none;
+  }
+  .flow > span:last-child,
+  .flow-host:hover .flow > span:first-child {
+    transform: none;
+  }
+  .flow > span:last-child {
+    display: none;
+  }
+  .team-card,
+  .team-empty::after,
+  .marquee__track,
+  .group:hover .team-name .h-letter {
+    animation: none;
   }
 }

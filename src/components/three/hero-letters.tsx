@@ -100,11 +100,14 @@ export function HeroLetters({ store }: { store: SceneStore }) {
     const visibleWidth = visibleHeight * (size.width / size.height);
     const scale = (visibleWidth * FILL) / total;
 
+    // Ligeramente por debajo del centro, para que el modelo la cruce.
+    // En pantallas estrechas el texto de la portada ocupa la mitad de
+    // abajo, así que la palabra sube por encima del centro.
+    const lift = size.width < 768 ? 2.2 : -0.35;
     if (group.current) {
       group.current.scale.setScalar(scale);
-      // Ligeramente por debajo del centro, para que el modelo la cruce.
-      group.current.position.set(0, -0.35 * scale, DEPTH);
-      material.uniforms.origin.value = [0, -0.35 * scale + fontSize * 0.36 * scale, DEPTH];
+      group.current.position.set(0, lift * scale, DEPTH);
+      material.uniforms.origin.value = [0, lift * scale + fontSize * 0.36 * scale, DEPTH];
     }
     material.uniforms.span.value = (total / 2) * scale;
     store.state.heroSpan = (total / 2) * scale;

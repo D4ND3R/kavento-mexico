@@ -85,7 +85,14 @@
     "rolePlaceholder": "[Role]",
     "portraitAlt": "Placeholder: portrait of a team member",
     "note": "Placeholder: replace names, roles and portraits in src/lib/team.ts",
-    "eyebrow": "Team"
+    "eyebrow": "Team",
+    "tape1": "Design",
+    "tape2": "Code",
+    "tape3": "Automation",
+    "tape4": "Private AI",
+    "tape5": "WhatsApp",
+    "tape6": "Support",
+    "tape7": "Made in Mexico"
   },
   "contact": {
     "title": "Tell us what you need",
@@ -171,5 +178,12 @@
       "p1": "what we build takes growth: more customers, more data, more team.",
       "p2": "and we stay close when it's time to expand it."
     }
+  },
+  "marks": {
+    "about": "About",
+    "services": "Work",
+    "reviews": "Reviews",
+    "team": "Team",
+    "contact": "Let's talk"
   }
 }

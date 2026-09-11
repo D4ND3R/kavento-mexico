@@ -4,6 +4,7 @@ import { useId, useMemo, useState, type FormEvent } from "react";
 
 import { ActionButton } from "@/components/ui/action";
 import { Crest } from "@/components/ui/crest";
+import { Watermark } from "@/components/ui/watermark";
 import { WhatsappGlyph } from "@/components/ui/whatsapp-glyph";
 import { useTranslations } from "@/lib/i18n/provider";
 import { serviceIds, serviceTitleKey } from "@/lib/services";
@@ -75,14 +76,21 @@ export function Contact() {
         ["--lit-y2" as string]: "10%",
       }}
     >
-      <Crest shape="loma" color="var(--bg-surface)" />
+      <Crest shape="loma" />
+      <Watermark>{t("marks.contact")}</Watermark>
 
       <div className="u-shell">
-        <p className="t-eyebrow mb-5">{t("contact.eyebrow")}</p>
+        <p className="t-eyebrow mb-5" data-drift="6">
+          {t("contact.eyebrow")}
+        </p>
         <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] lg:gap-16">
           <div>
-            <h2 className="t-h2">{t("contact.title")}</h2>
-            <p className="t-lead mt-5">{t("contact.lead")}</p>
+            <h2 className="t-h2" data-drift="12">
+              {t("contact.title")}
+            </h2>
+            <p className="t-lead mt-5" data-drift="8">
+              {t("contact.lead")}
+            </p>
 
             <form onSubmit={handleSubmit} noValidate className="mt-10 flex flex-col gap-6">
               <Field

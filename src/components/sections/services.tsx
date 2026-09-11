@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ServiceMock } from "@/components/mocks/service-mocks";
 import { SplitText } from "@/components/ui/letters";
 import { Crest } from "@/components/ui/crest";
+import { Watermark } from "@/components/ui/watermark";
 import { useTranslations } from "@/lib/i18n/provider";
 import {
   serviceAnchor,
@@ -136,15 +137,18 @@ export function Services() {
         ["--lit-y2" as string]: "84%",
       }}
     >
-      <Crest shape="sierra" color="var(--bg-primary)" />
+      <Crest shape="sierra" />
+      <Watermark>{t("marks.services")}</Watermark>
 
       <div className="u-shell">
-        <p className="t-eyebrow">{t("services.eyebrow")}</p>
+        <p className="t-eyebrow" data-drift="6">
+          {t("services.eyebrow")}
+        </p>
         <div className="mt-5 lg:flex lg:items-end lg:justify-between lg:gap-16">
-          <h2 className="t-h2 max-w-[14ch]" data-stagger data-reveal>
+          <h2 className="t-h2 max-w-[14ch]" data-stagger data-reveal data-drift="12">
             <SplitText text={t("services.title")} reveal />
           </h2>
-          <p className="t-lead mt-5 lg:mt-0 lg:max-w-[34ch] lg:text-right">
+          <p className="t-lead mt-5 lg:mt-0 lg:max-w-[34ch] lg:text-right" data-drift="8">
             {t("services.lead")}
           </p>
         </div>

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { FlowText } from "@/components/ui/flow-text";
 import { LanguageToggle } from "@/components/ui/language-toggle";
 import { SolarMark } from "@/components/ui/logo";
 import { useTranslations } from "@/lib/i18n/provider";
@@ -63,6 +64,7 @@ export function Navbar() {
           <a
             href="#top"
             aria-label="Kavento México"
+            data-magnet="10"
             className="lg lg--pill lg--refract lg-motion lg-press lg-hover flex size-12 items-center justify-center"
           >
             {/* Solo el disco: el wordmark completo repetía lo que ya dice
@@ -122,9 +124,10 @@ export function Navbar() {
                       onPointerEnter={(event) => follow(event.currentTarget)}
                       onFocus={(event) => follow(event.currentTarget)}
                       onBlur={release}
-                      className="relative block whitespace-nowrap rounded-[var(--r-pill)] px-3.5 py-2 text-[0.8125rem] text-muted transition-colors duration-[var(--dur-base)] hover:text-ink"
+                      data-magnet="6"
+                      className="flow-host relative block whitespace-nowrap rounded-[var(--r-pill)] px-3.5 py-2 text-[0.8125rem] text-muted transition-colors duration-[var(--dur-base)] hover:text-ink"
                     >
-                      {t(section.key)}
+                      <FlowText>{t(section.key)}</FlowText>
                     </a>
                   </li>
                 ))}
@@ -161,9 +164,9 @@ export function Navbar() {
                   <a
                     href={`#${section.id}`}
                     onClick={() => setMenuOpen(false)}
-                    className="block rounded-[var(--r-card)] px-4 py-3.5 text-ink transition-colors duration-[var(--dur-fast)] hover:bg-[rgba(255,244,232,0.07)]"
+                    className="flow-host block rounded-[var(--r-card)] px-4 py-3.5 text-ink transition-colors duration-[var(--dur-fast)] hover:bg-[rgba(255,244,232,0.07)]"
                   >
-                    {t(section.key)}
+                    <FlowText>{t(section.key)}</FlowText>
                   </a>
                 </li>
               ))}

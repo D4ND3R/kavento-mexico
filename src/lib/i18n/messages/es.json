@@ -85,7 +85,14 @@
     "rolePlaceholder": "[Puesto]",
     "portraitAlt": "Marcador: retrato de integrante del equipo",
     "note": "Marcador: reemplaza nombres, puestos y retratos en src/lib/team.ts",
-    "eyebrow": "Equipo"
+    "eyebrow": "Equipo",
+    "tape1": "Diseño",
+    "tape2": "Código",
+    "tape3": "Automatización",
+    "tape4": "IA privada",
+    "tape5": "WhatsApp",
+    "tape6": "Soporte",
+    "tape7": "Hecho en México"
   },
   "contact": {
     "title": "Cuéntanos qué necesitas",
@@ -171,5 +178,12 @@
       "p1": "lo que construimos aguanta el crecimiento: más clientes, más datos, más equipo.",
       "p2": "y seguimos cerca cuando toca ampliarlo."
     }
+  },
+  "marks": {
+    "about": "Nosotros",
+    "services": "Trabajos",
+    "reviews": "Reseñas",
+    "team": "Equipo",
+    "contact": "Hablemos"
   }
 }

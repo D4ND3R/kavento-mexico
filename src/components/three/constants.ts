@@ -54,16 +54,19 @@ export type Vec3 = { x: number; y: number; z: number };
 /**
  * Anclajes del modelo por sección. El original guarda posiciones en
  * unidades de su FBX; aquí el Möbius es procedural y mide ~7 unidades,
- * así que la escala base es 1 en vez de 0.015.
+ * así que la escala base va en unidades de mundo (1.3: ocupa unas tres
+ * cuartas partes del alto de la pantalla) en vez de 0.015.
  */
 export const PINS = {
   SECTION1: {
     position: { x: 0, y: 0, z: -1.1 },
     rotation: { x: 0, y: Math.PI / 6, z: 0 },
-    scale: 1,
+    scale: 1.3,
   },
   SECTION34: {
-    position: { x: 5, y: 0, z: 3.9 },
+    // Algo menos a la derecha que el original (5): con el modelo más
+    // grande, a 5 se salía de pantalla.
+    position: { x: 4.4, y: 0, z: 3.4 },
     rotationStart: { x: 0, y: Math.PI / 4, z: 0 },
     rotationEnd: { x: 2 * Math.PI, y: Math.PI / 4, z: 0 },
   },

@@ -1,11 +1,19 @@
 /**
  * Cresta: el corte entre dos secciones no es una recta.
  *
- * Cada sección apilada lleva una cresta arriba, del color de la propia
- * sección, colocada justo por encima de su borde superior. Al montarse
- * sobre la sección anterior, el filo que se ve es una silueta y no una
- * línea horizontal. Es la mecánica de `.t-wavy-crest` del portafolio,
- * dibujada en SVG en lugar de con un PNG.
+ * Cada sección apilada lleva una cresta arriba, colocada justo por
+ * encima de su borde superior. Al montarse sobre la sección anterior,
+ * el filo que se ve es una silueta y no una línea horizontal. Es la
+ * mecánica de `.t-wavy-crest` del portafolio.
+ *
+ * La cresta no es una figura pegada encima: es la **luz de la sección**
+ * recortada con una máscara. El elemento `.stack__light` lleva el color
+ * de fondo y las dos masas de luz de la carta, y se extiende por encima
+ * del borde superior tanto como mide la cresta; la máscara le da la
+ * silueta arriba. Así el degradado de luz cruza el filo sin cortarse y
+ * no queda ninguna línea recta entre cresta y sección, que es lo que
+ * pasaba cuando la cresta era una figura plana del color de la sección
+ * y la luz empezaba justo debajo.
  *
  * Los perfiles son deliberadamente irregulares: amplitudes desiguales,
  * algún pico afilado y algún hundimiento. Una onda regular se lee como
@@ -34,19 +42,18 @@ const SHAPES = {
 
 export type CrestShape = keyof typeof SHAPES;
 
-export function Crest({
-  shape,
-  color,
-}: {
-  shape: CrestShape;
-  /** Variable CSS del color de la sección a la que pertenece la cresta. */
-  color: string;
-}) {
+/** La silueta como imagen de máscara (negro = visible). */
+function maskUrl(shape: CrestShape): string {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 200" preserveAspectRatio="none"><path d="${SHAPES[shape]}" fill="#000"/></svg>`;
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+}
+
+export function Crest({ shape }: { shape: CrestShape }) {
   return (
-    <div className="crest" aria-hidden="true">
-      <svg viewBox="0 0 1440 200" preserveAspectRatio="none">
-        <path d={SHAPES[shape]} fill={color} />
-      </svg>
-    </div>
+    <div
+      className="stack__light"
+      aria-hidden="true"
+      style={{ ["--crest-mask" as string]: maskUrl(shape) }}
+    />
   );
 }

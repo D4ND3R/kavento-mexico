@@ -3,6 +3,7 @@
 import Image from "next/image";
 
 import { Crest } from "@/components/ui/crest";
+import { Watermark } from "@/components/ui/watermark";
 import { SplitText } from "@/components/ui/letters";
 import { useTranslations } from "@/lib/i18n/provider";
 import { reviews } from "@/lib/reviews";
@@ -38,16 +39,17 @@ export function Reviews() {
         ["--lit-b" as string]: "var(--glow-green)",
       }}
     >
-      <Crest shape="desgarro" color="var(--surface-green)" />
+      <Crest shape="desgarro" />
+      <Watermark>{t("marks.reviews")}</Watermark>
 
       <div className="u-shell">
         <p className="t-eyebrow text-center" style={{ color: "var(--accent-green)" }}>
           {t("reviews.eyebrow")}
         </p>
-        <h2 className="t-h2 mt-3 text-center" data-stagger>
+        <h2 className="t-h2 mt-3 text-center" data-stagger data-drift="12">
           <SplitText text={t("reviews.title")} reveal />
         </h2>
-        <p className="t-lead mx-auto mt-5 max-w-[52ch] text-center">
+        <p className="t-lead mx-auto mt-5 max-w-[52ch] text-center" data-drift="8">
           {t("reviews.lead")}
         </p>
 
@@ -60,6 +62,7 @@ export function Reviews() {
             <li
               key={review.id}
               className="fan__card lg lg--panel lg--refract lg-motion p-8"
+              data-drift={8 + index * 3}
               style={{
                 ["--pos" as string]: index - 1,
                 ["--glass-bg" as string]: "rgba(255, 250, 240, 0.09)",
