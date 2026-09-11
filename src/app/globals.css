@@ -620,6 +620,17 @@ body[data-loading="true"] {
   cursor: pointer;
 }
 
+/* Velo que atenúa las tarjetas laterales sin volverlas translúcidas. */
+.deck__veil {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: #120e0a;
+  opacity: 0;
+  transition: opacity 620ms ease;
+}
+
 .deck__nav {
   display: flex;
   align-items: center;

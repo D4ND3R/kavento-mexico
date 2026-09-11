@@ -68,19 +68,25 @@ export function Services() {
 
         const abs = Math.abs(off);
         const dir = Math.sign(off);
+        // Las laterales se oscurecen con un velo, no con opacidad: una
+        // tarjeta translúcida deja ver la de atrás y se emborronan.
+        const veil = card.querySelector<HTMLElement>("[data-veil]");
 
         if (abs > visible) {
           card.style.transform = `translateX(${dir * 380}px) translateZ(-400px) rotateY(${-dir * rot}deg)`;
           card.style.opacity = "0";
           card.style.pointerEvents = "none";
+          if (veil) veil.style.opacity = "0.7";
         } else if (abs === 0) {
           card.style.transform = "translateX(0px) translateZ(60px) rotateY(0deg)";
           card.style.opacity = "1";
           card.style.pointerEvents = "auto";
+          if (veil) veil.style.opacity = "0";
         } else {
           card.style.transform = `translateX(${dir * shift}px) translateZ(-${abs * 120}px) rotateY(${-dir * rot}deg)`;
-          card.style.opacity = (1 - abs * 0.35).toFixed(2);
+          card.style.opacity = "1";
           card.style.pointerEvents = "auto";
+          if (veil) veil.style.opacity = (0.28 + abs * 0.22).toFixed(2);
         }
 
         card.style.zIndex = String(count - abs);
@@ -178,6 +184,7 @@ export function Services() {
                 onClick={() => setActive(index)}
                 className="deck__card lg lg--solid flex flex-col"
               >
+                <span className="deck__veil" data-veil aria-hidden="true" />
                 <div className="min-h-0 flex-1 p-3">
                   <ServiceMock id={id} />
                 </div>
