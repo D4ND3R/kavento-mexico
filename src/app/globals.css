@@ -600,6 +600,15 @@ body[data-loading="true"] {
   position: absolute;
   inset: 0;
   transform-origin: center center;
+  /* Opacas de verdad: con el vidrio al 72 % y el desenfoque del fondo,
+     las tarjetas de atrás se transparentaban a través de la de
+     delante y el conjunto se veía borroso. La de delante tapa a las
+     otras; las de los lados se atenúan con opacidad sobre el fondo de
+     la sección, que sí es plano. */
+  --glass-bg: #231c16;
+  --glass-bloom: rgba(255, 246, 236, 0.05);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   transition:
     transform 620ms var(--ease-liquid),
     opacity 620ms ease,
