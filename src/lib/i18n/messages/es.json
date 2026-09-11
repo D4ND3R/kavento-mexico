@@ -148,13 +148,16 @@
     "aiPrivacy": "Tus datos no salen de tu servidor"
   },
   "reviews": {
-    "eyebrow": "Reseñas",
-    "title": "En sus palabras",
-    "lead": "Marcador: aquí van reseñas reales de clientes. Las de abajo son de relleno y deben reemplazarse antes de publicar.",
-    "note": "Marcador: reemplaza estas reseñas en src/lib/reviews.ts",
-    "quotePlaceholder": "[Texto de la reseña. Pide al cliente dos o tres frases sobre qué le resolvimos, en cuánto tiempo y qué cambió después.]",
-    "namePlaceholder": "[Nombre del cliente]",
-    "rolePlaceholder": "[Puesto · Empresa]"
+    "eyebrow": "Casos",
+    "title": "Quiénes son y qué les hicimos",
+    "lead": "Marcador: aquí van tres casos reales de clientes. Los de abajo son de relleno y deben reemplazarse antes de publicar.",
+    "note": "Marcador: reemplaza estos casos en src/lib/reviews.ts",
+    "quotePlaceholder": "[Una frase del cliente sobre qué le resolvimos.]",
+    "clientPlaceholder": "[Cliente]",
+    "sectorPlaceholder": "[Sector · Ciudad]",
+    "workPlaceholder": "[Qué les hicimos: web, automatización, app, chatbot o IA privada.]",
+    "imagePlaceholder": "[Imagen del proyecto, 1200 × 1500]",
+    "production": "un proyecto de Kavento"
   },
   "journey": {
     "line1": "EL SOFTWARE GENÉRICO NO ENCAJA. ¿POR QUÉ CONFORMARSE?",
@@ -182,7 +185,7 @@
   "marks": {
     "about": "Nosotros",
     "services": "Trabajos",
-    "reviews": "Reseñas",
+    "reviews": "Casos",
     "team": "Equipo",
     "contact": "Hablemos"
   }

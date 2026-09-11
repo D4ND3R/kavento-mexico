@@ -1,28 +1,35 @@
 /**
- * Reseñas — MARCADORES.
+ * Casos de clientes — MARCADORES.
  *
- * Estas NO son reseñas reales. Publicar testimonios inventados como si
- * fueran de clientes es engañoso, así que se dejan explícitamente
- * vacías: cada campo en `null` dibuja su marcador etiquetado.
+ * Estos NO son clientes reales. Publicar casos o testimonios inventados
+ * como si fueran de clientes es engañoso, así que se dejan
+ * explícitamente vacíos: cada campo en `null` dibuja su marcador
+ * etiquetado.
  *
- * Para llenarlas, pide al cliente dos o tres frases sobre qué se le
- * resolvió, en cuánto tiempo y qué cambió después, y sustituye:
+ * Cada caso es un póster a toda altura (como la parrilla de trabajos de
+ * altitude101): una imagen grande, quién es el cliente y qué le
+ * hicimos. Para llenarlo:
  *
- *   { id: "r1", quote: "…", name: "Ana Ruiz", role: "Directora · Acme",
- *     photo: "/resenas/ana.webp" }
- *
- * Las fotos van en /public/resenas/ (recomendado: 200×200 px, WebP).
+ *   {
+ *     id: "c1",
+ *     client: "Acme",                       // nombre grande sobre la imagen
+ *     sector: "Logística · CDMX",           // etiqueta pequeña arriba
+ *     work: "Panel de control y automatización de pedidos por WhatsApp",
+ *     quote: "…",                           // opcional, una frase del cliente
+ *     image: "/casos/acme.webp",            // 1200×1500 px, WebP o AVIF
+ *   }
  */
-export type Review = {
+export type CaseStudy = {
   id: string;
+  client: string | null;
+  sector: string | null;
+  work: string | null;
   quote: string | null;
-  name: string | null;
-  role: string | null;
-  photo: string | null;
+  image: string | null;
 };
 
-export const reviews: Review[] = [
-  { id: "r1", quote: null, name: null, role: null, photo: null },
-  { id: "r2", quote: null, name: null, role: null, photo: null },
-  { id: "r3", quote: null, name: null, role: null, photo: null },
+export const cases: CaseStudy[] = [
+  { id: "c1", client: null, sector: null, work: null, quote: null, image: null },
+  { id: "c2", client: null, sector: null, work: null, quote: null, image: null },
+  { id: "c3", client: null, sector: null, work: null, quote: null, image: null },
 ];

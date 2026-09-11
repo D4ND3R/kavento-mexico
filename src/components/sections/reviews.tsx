@@ -3,24 +3,30 @@
 import Image from "next/image";
 
 import { Crest } from "@/components/ui/crest";
-import { Watermark } from "@/components/ui/watermark";
 import { SplitText } from "@/components/ui/letters";
+import { Watermark } from "@/components/ui/watermark";
 import { useTranslations } from "@/lib/i18n/provider";
-import { reviews } from "@/lib/reviews";
+import { cases } from "@/lib/reviews";
 
 /**
- * Reseñas.
+ * Casos: quiénes son y qué les hicimos.
  *
- * Sección verde, como la de testimonios del portafolio: es el único
- * acento frío grande de la página y por eso funciona como respiro entre
- * dos secciones cálidas.
+ * Es la parrilla de trabajos de altitude101: tres pósters a toda
+ * altura, uno al lado del otro, que ocupan la pantalla completa. Cada
+ * póster es una imagen grande con la etiqueta del proyecto arriba, el
+ * nombre del cliente enorme en el centro y, abajo, qué se le hizo.
  *
- * Las tarjetas se abren en abanico: `--pos` sitúa cada una respecto al
- * centro y `--spread`, que escribe el motor de scroll conforme entra la
- * sección, controla cuánto se separan. Es la mecánica de `.t-card-box`
- * del original.
+ * Entran como en el original: el primero ya está en su sitio y los
+ * otros dos llegan desde la derecha, escalonados, cuando la sección
+ * alcanza el 80 % de la pantalla (lo dispara `data-inview`, que
+ * escribe el motor de apilado). Al pasar el cursor la imagen se acerca
+ * y la ficha sube.
  *
- * OJO: los textos son marcadores a propósito. Ver src/lib/reviews.ts.
+ * La sección sigue siendo verde: es el único acento frío grande de la
+ * página y funciona como respiro entre dos secciones cálidas.
+ *
+ * OJO: los textos y las imágenes son marcadores a propósito. Ver
+ * src/lib/reviews.ts.
  */
 export function Reviews() {
   const t = useTranslations();
@@ -29,116 +35,81 @@ export function Reviews() {
     <section
       id="resenas"
       data-stack
-      className="stack stack-4 stack--green stack--pad"
+      className="stack stack-4 stack--green cases-section"
       style={{
         ["--lit-x" as string]: "50%",
-        ["--lit-y" as string]: "18%",
+        ["--lit-y" as string]: "12%",
         ["--lit-a" as string]: "var(--glow-green)",
         ["--lit-x2" as string]: "84%",
-        ["--lit-y2" as string]: "88%",
+        ["--lit-y2" as string]: "92%",
         ["--lit-b" as string]: "var(--glow-green)",
       }}
     >
       <Crest shape="desgarro" />
       <Watermark>{t("marks.reviews")}</Watermark>
 
-      <div className="u-shell">
-        <p className="t-eyebrow text-center" style={{ color: "var(--accent-green)" }}>
-          {t("reviews.eyebrow")}
-        </p>
-        <h2 className="t-h2 mt-3 text-center" data-stagger data-drift="12">
-          <SplitText text={t("reviews.title")} reveal />
-        </h2>
-        <p className="t-lead mx-auto mt-5 max-w-[52ch] text-center" data-drift="8">
+      <div className="u-shell cases-head">
+        <div>
+          <p className="t-eyebrow" style={{ color: "var(--accent-green)" }} data-drift="6">
+            {t("reviews.eyebrow")}
+          </p>
+          <h2 className="t-h2 mt-3 max-w-[16ch]" data-stagger data-drift="12">
+            <SplitText text={t("reviews.title")} reveal />
+          </h2>
+        </div>
+        <p className="t-lead lg:max-w-[38ch] lg:text-right" data-drift="8">
           {t("reviews.lead")}
         </p>
+      </div>
 
-        <ul
-          data-fan
-          data-stagger
-          className="a-stagger fan mt-[clamp(3rem,7vh,5rem)]"
-        >
-          {reviews.map((review, index) => (
+      <ul data-stagger className="cases">
+        {cases.map((item, index) => {
+          const client = item.client ?? t("reviews.clientPlaceholder");
+          return (
             <li
-              key={review.id}
-              className="fan__card lg lg--panel lg--refract lg-motion p-8"
-              data-drift={8 + index * 3}
-              style={{
-                ["--pos" as string]: index - 1,
-                ["--glass-bg" as string]: "rgba(255, 250, 240, 0.09)",
-                ["--glass-bloom" as string]: "rgba(196, 240, 214, 0.18)",
-              }}
+              key={item.id}
+              className="cases__item"
+              style={{ ["--i" as string]: index }}
+              data-drift={6 + index * 4}
             >
-              <div>
-                <QuoteGlyph />
-                <blockquote className="mt-5 text-[0.9375rem] leading-relaxed text-ink">
-                  {review.quote ?? t("reviews.quotePlaceholder")}
-                </blockquote>
-              </div>
+              <article className="case group">
+                <div className="case__media">
+                  {item.image ? (
+                    <Image
+                      src={item.image}
+                      alt={client}
+                      fill
+                      sizes="(min-width: 768px) 33vw, 100vw"
+                      className="case__img"
+                    />
+                  ) : (
+                    <span className="case__empty">{t("reviews.imagePlaceholder")}</span>
+                  )}
+                  <span className="case__veil" aria-hidden="true" />
+                </div>
 
-              <div className="mt-8">
-                <hr className="u-rule border-0" />
-                <div className="mt-5 flex items-center gap-3.5">
-                  <span
-                    className="relative size-11 shrink-0 overflow-hidden rounded-full"
-                    style={{
-                      background: "rgba(255,250,240,0.1)",
-                      border: "1px solid var(--border-strong)",
-                    }}
-                  >
-                    {review.photo ? (
-                      <Image
-                        src={review.photo}
-                        alt={review.name ?? ""}
-                        fill
-                        sizes="44px"
-                        className="object-cover"
-                      />
-                    ) : null}
-                  </span>
-                  <span>
-                    <span
-                      className="block text-[0.9375rem] leading-tight text-ink"
-                      style={{
-                        fontFamily: "var(--font-display)",
-                        fontWeight: 700,
-                      }}
-                    >
-                      {review.name ?? t("reviews.namePlaceholder")}
-                    </span>
-                    <span className="mt-0.5 block text-[0.8125rem] text-muted">
-                      {review.role ?? t("reviews.rolePlaceholder")}
-                    </span>
+                <div className="case__top">
+                  <span className="case__label">{t("reviews.production")}</span>
+                  <span className="case__sector">
+                    {item.sector ?? t("reviews.sectorPlaceholder")}
                   </span>
                 </div>
-              </div>
+
+                <h3 className="case__client">
+                  <SplitText text={client} reveal />
+                </h3>
+
+                <div className="case__foot">
+                  <p className="case__work">{item.work ?? t("reviews.workPlaceholder")}</p>
+                  <p className="case__quote">{item.quote ?? t("reviews.quotePlaceholder")}</p>
+                </div>
+              </article>
             </li>
-          ))}
-        </ul>
+          );
+        })}
+      </ul>
 
-        <p className="mt-10 text-center text-[0.8125rem] text-faint">
-          {t("reviews.note")}
-        </p>
-      </div>
+      <p className="u-shell mt-8 text-[0.8125rem] text-faint">{t("reviews.note")}</p>
     </section>
-  );
-}
-
-function QuoteGlyph() {
-  return (
-    <svg
-      width="30"
-      height="24"
-      viewBox="0 0 30 24"
-      fill="none"
-      aria-hidden="true"
-      style={{ color: "var(--accent-green)" }}
-    >
-      <path
-        d="M11.6 0C5.2 0 0 5.2 0 11.6 0 18 5.2 24 11.6 24c1.2 0 2-.6 2-1.6 0-.9-.6-1.5-1.7-1.6-4-.3-7-3.6-7-7.6h5.7c1.1 0 1.8-.7 1.8-1.8V1.8c0-1.1-.7-1.8-1.8-1.8Zm16 0C21.2 0 16 5.2 16 11.6 16 18 21.2 24 27.6 24c1.2 0 2-.6 2-1.6 0-.9-.6-1.5-1.7-1.6-4-.3-7-3.6-7-7.6h5.7c1.1 0 1.8-.7 1.8-1.8V1.8c0-1.1-.7-1.8-1.8-1.8Z"
-        fill="currentColor"
-        opacity="0.85"
-      />
-    </svg>
   );
 }

@@ -148,13 +148,16 @@
     "aiPrivacy": "Your data never leaves your server"
   },
   "reviews": {
-    "eyebrow": "Reviews",
-    "title": "In their words",
-    "lead": "Placeholder: real client reviews go here. The ones below are filler and must be replaced before launch.",
-    "note": "Placeholder: replace these reviews in src/lib/reviews.ts",
-    "quotePlaceholder": "[Review text. Ask the client for two or three sentences on what we solved, how long it took and what changed afterwards.]",
-    "namePlaceholder": "[Client name]",
-    "rolePlaceholder": "[Role · Company]"
+    "eyebrow": "Cases",
+    "title": "Who they are and what we built",
+    "lead": "Placeholder: three real client cases go here. The ones below are filler and must be replaced before launch.",
+    "note": "Placeholder: replace these cases in src/lib/reviews.ts",
+    "quotePlaceholder": "[One line from the client about what we solved.]",
+    "clientPlaceholder": "[Client]",
+    "sectorPlaceholder": "[Sector · City]",
+    "workPlaceholder": "[What we built: web, automation, app, chatbot or private AI.]",
+    "imagePlaceholder": "[Project image, 1200 × 1500]",
+    "production": "a Kavento project"
   },
   "journey": {
     "line1": "OFF-THE-SHELF SOFTWARE DOESN'T FIT. WHY SETTLE?",
@@ -182,7 +185,7 @@
   "marks": {
     "about": "About",
     "services": "Work",
-    "reviews": "Reviews",
+    "reviews": "Cases",
     "team": "Team",
     "contact": "Let's talk"
   }

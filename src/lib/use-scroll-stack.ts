@@ -10,14 +10,13 @@ import { useEffect } from "react";
    para no provocar layout thrashing. Arquitectura del portafolio de
    Leonardo Díaz Delgado.
 
-   De aquí salen cuatro cosas:
+   De aquí salen tres cosas:
 
    1. Apilado    secciones con position:sticky y z-index creciente;
                  updatePins() ancla en `vh - alto` las que no caben.
    2. Cortinas   velo negro por sección, cuya opacidad sube conforme la
                  siguiente la cubre.
    3. Navbar     se colapsa al bajar y se abre al subir o al detenerse.
-   4. Abanico    --spread, que abre las tarjetas de reseñas.
 
    La portada 3D no forma parte de la baraja: va antes, con su propio
    motor (GSAP + ScrollTrigger), y la primera carta la tapa al subir.
@@ -41,10 +40,6 @@ const SHADE_MAX = 0.55;
 const CURTAIN_START = 0.55;
 const CURTAIN_SPAN = 1.5;
 
-/** El abanico de reseñas se abre cuando la sección ya entró de verdad. */
-const FAN_START = 0.45;
-const FAN_SPAN = 0.6;
-
 /** Umbral y espera de la navbar, del portafolio. */
 const NAV_DELTA = 8;
 const NAV_IDLE = 700;
@@ -62,7 +57,6 @@ export function useScrollStack() {
     ).matches;
 
     const navPill = document.querySelector<HTMLElement>("[data-nav-pill]");
-    const fans = Array.from(document.querySelectorAll<HTMLElement>("[data-fan]"));
 
     /* --- cortinas ------------------------------------------------ */
     // La última sección no necesita cortina: nada la cubre.
@@ -141,20 +135,12 @@ export function useScrollStack() {
       for (let i = 0; i < sections.length; i += 1) {
         tops[i] = sections[i].getBoundingClientRect().top;
       }
-      const fanTops = fans.map((fan) => fan.getBoundingClientRect().top);
 
       // ESCRITURA
       for (let i = 0; i < shades.length; i += 1) {
         const entered = (vh - tops[i + 1]) / vh;
         const progress = ease((entered - CURTAIN_START) / CURTAIN_SPAN);
         shades[i].style.opacity = (SHADE_MAX * progress).toFixed(3);
-      }
-
-      // Abanico de reseñas.
-      for (let i = 0; i < fans.length; i += 1) {
-        const entered = (vh - fanTops[i]) / vh;
-        const spread = ease((entered - FAN_START) / FAN_SPAN);
-        fans[i].style.setProperty("--spread", spread.toFixed(3));
       }
 
       // Navbar: se colapsa al bajar, se abre al subir, al detenerse o
@@ -191,8 +177,7 @@ export function useScrollStack() {
 
     if (prefersReduced) {
       // Se conserva el apilado (es estructura, no adorno) pero las
-      // cortinas y el abanico se quedan en su estado final.
-      for (const fan of fans) fan.style.setProperty("--spread", "1");
+      // cortinas se quedan en su estado final.
       window.addEventListener("resize", updatePins, { passive: true });
       return () => {
         window.clearTimeout(rescueTimer);

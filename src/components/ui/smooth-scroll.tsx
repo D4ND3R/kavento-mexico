@@ -77,6 +77,22 @@ export function SmoothScroll() {
 
     // Los enlaces de ancla los maneja Lenis para que el salto también
     // sea suave y termine donde debe.
+    //
+    // No se le pasa el elemento a Lenis: para medirlo usaría
+    // getBoundingClientRect, y las secciones apiladas van en
+    // `position: sticky`. Una sección ya fijada arriba mide top = 0 (o
+    // negativo) aunque en el documento esté mucho más abajo, así que el
+    // salto se quedaba corto o no subía. Se mide con el sticky apagado
+    // un instante: el cambio y la lectura ocurren en el mismo tick, sin
+    // pintado en medio, así que no parpadea nada.
+    function documentTop(element: HTMLElement): number {
+      const previous = element.style.position;
+      element.style.position = "static";
+      const top = element.getBoundingClientRect().top + window.scrollY;
+      element.style.position = previous;
+      return Math.round(top);
+    }
+
     function onClick(event: MouseEvent) {
       const link = (event.target as HTMLElement | null)?.closest?.(
         'a[href^="#"]',
@@ -86,11 +102,16 @@ export function SmoothScroll() {
       const id = link.getAttribute("href");
       if (!id || id === "#") return;
 
-      const target = document.querySelector(id);
+      const target = document.querySelector<HTMLElement>(id);
       if (!target) return;
 
       event.preventDefault();
-      lenis.scrollTo(target as HTMLElement, { offset: -96, duration: 1.4 });
+      // Sin margen: las secciones llevan su propio aire arriba (y la
+      // cresta), así que aterrizar justo en su borde deja el título a
+      // la vista con la navbar encima sin taparlo.
+      lenis.scrollTo(id === "#top" ? 0 : documentTop(target), {
+        duration: 1.4,
+      });
     }
 
     document.addEventListener("click", onClick);
