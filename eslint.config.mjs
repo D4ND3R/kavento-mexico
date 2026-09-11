@@ -15,6 +15,17 @@ const eslintConfig = defineConfig([
     // código del proyecto y no deben romper el CI.
     ".claude/**",
   ]),
+  {
+    // La capa 3D es imperativa por diseño: GSAP y three.js escriben
+    // posiciones, rotaciones y uniformes en objetos que viven fuera del
+    // render de React (el almacén de la escena, la cámara, las mallas).
+    // La regla de inmutabilidad del compilador de React marca cada una
+    // de esas escrituras; aquí no son un error sino el mecanismo.
+    files: ["src/components/three/**", "src/components/sections/journey.tsx"],
+    rules: {
+      "react-hooks/immutability": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;

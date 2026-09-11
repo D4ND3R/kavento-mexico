@@ -10,7 +10,7 @@ import { useEffect } from "react";
    para no provocar layout thrashing. Arquitectura del portafolio de
    Leonardo Díaz Delgado.
 
-   De aquí salen cinco cosas:
+   De aquí salen cuatro cosas:
 
    1. Apilado    secciones con position:sticky y z-index creciente;
                  updatePins() ancla en `vh - alto` las que no caben.
@@ -18,7 +18,9 @@ import { useEffect } from "react";
                  siguiente la cubre.
    3. Navbar     se colapsa al bajar y se abre al subir o al detenerse.
    4. Abanico    --spread, que abre las tarjetas de reseñas.
-   5. Cortina    --curtain, que abre el campo de fondo del hero.
+
+   La portada 3D no forma parte de la baraja: va antes, con su propio
+   motor (GSAP + ScrollTrigger), y la primera carta la tapa al subir.
    ================================================================== */
 
 /** Suavizado tipo smoothstep. */
@@ -38,13 +40,6 @@ const SHADE_MAX = 0.55;
  */
 const CURTAIN_START = 0.55;
 const CURTAIN_SPAN = 1.5;
-
-/**
- * El campo de fondo tampoco se abre desde el primer píxel de scroll:
- * espera a que el hero haya subido un tercio de pantalla.
- */
-const FIELD_START = 0.32;
-const FIELD_SPAN = 0.95;
 
 /** El abanico de reseñas se abre cuando la sección ya entró de verdad. */
 const FAN_START = 0.45;
@@ -155,29 +150,12 @@ export function useScrollStack() {
         shades[i].style.opacity = (SHADE_MAX * progress).toFixed(3);
       }
 
-      // El hero retrocede mientras lo tapan.
-      const recede = sections[0].querySelector<HTMLElement>("[data-recede]");
-      if (recede) {
-        const height = sections[0].offsetHeight || vh;
-        const p = Math.min(Math.max(-tops[0] / (height * 0.85), 0), 1);
-        const eased = 1 - Math.pow(1 - p, 3);
-        recede.style.transform = `scale(${(1 - eased * 0.1).toFixed(4)})`;
-        recede.style.opacity = (1 - eased * 0.35).toFixed(3);
-      }
-
       // Abanico de reseñas.
       for (let i = 0; i < fans.length; i += 1) {
         const entered = (vh - fanTops[i]) / vh;
         const spread = ease((entered - FAN_START) / FAN_SPAN);
         fans[i].style.setProperty("--spread", spread.toFixed(3));
       }
-
-      // Campo de fondo del hero.
-      const curtain = ease((-tops[0] / vh - FIELD_START) / FIELD_SPAN);
-      document.documentElement.style.setProperty(
-        "--curtain",
-        curtain.toFixed(4),
-      );
 
       // Navbar: se colapsa al bajar, se abre al subir, al detenerse o
       // al volver cerca del tope.
@@ -214,7 +192,6 @@ export function useScrollStack() {
     if (prefersReduced) {
       // Se conserva el apilado (es estructura, no adorno) pero las
       // cortinas y el abanico se quedan en su estado final.
-      document.documentElement.style.setProperty("--curtain", "1");
       for (const fan of fans) fan.style.setProperty("--spread", "1");
       window.addEventListener("resize", updatePins, { passive: true });
       return () => {

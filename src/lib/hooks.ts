@@ -56,3 +56,21 @@ export function useCoarsePointer(): boolean {
     () => false,
   );
 }
+
+function subscribeNarrow(onChange: () => void) {
+  const query = window.matchMedia("(max-width: 767px)");
+  query.addEventListener("change", onChange);
+  return () => query.removeEventListener("change", onChange);
+}
+
+/**
+ * true por debajo de 768px. La escena 3D baja de escala y desactiva el
+ * arrastre en pantallas estrechas; el corte es el `md` de Tailwind.
+ */
+export function useIsMobile(): boolean {
+  return useSyncExternalStore(
+    subscribeNarrow,
+    () => window.matchMedia("(max-width: 767px)").matches,
+    () => false,
+  );
+}

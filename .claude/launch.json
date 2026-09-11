@@ -6,6 +6,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "port": 3000
+    },
+    {
+      "name": "altitude101-mirror",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["C:/Users/d4nd3r/Desktop/altitude101-local/server.js", "8101"],
+      "port": 8101
     }
   ]
 }

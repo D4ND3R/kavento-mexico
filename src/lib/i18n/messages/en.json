@@ -21,7 +21,6 @@
   },
   "hero": {
     "kicker": "Kavento — Digital Solutions",
-    "titleLine1": "We build technology that",
     "lead": "We are a Mexican team. We build software made to fit, end to end.",
     "ctaPrimary": "Tell us what you need",
     "ctaSecondary": "See what we do",
@@ -35,12 +34,9 @@
     "cardTeamLabel": "Who does it",
     "cardTeamValue": "Mexican team",
     "cardTeamNote": "You talk straight to the people who write the code.",
-    "word1": "Scales",
-    "word2": "Automates",
-    "word3": "Sells",
-    "word4": "Holds up",
     "place": "Mexico City · Remote",
-    "vertical": "Software made to fit"
+    "dragHint": "Drag to spin",
+    "gauge": "Page progress"
   },
   "about": {
     "title": "What we do",
@@ -152,5 +148,28 @@
     "quotePlaceholder": "[Review text. Ask the client for two or three sentences on what we solved, how long it took and what changed afterwards.]",
     "namePlaceholder": "[Client name]",
     "rolePlaceholder": "[Role · Company]"
+  },
+  "journey": {
+    "line1": "OFF-THE-SHELF SOFTWARE DOESN'T FIT. WHY SETTLE?",
+    "line2": "at kavento, we believe every business deserves technology made to measure.",
+    "line3": "that's why we design, build and automate end to end, with the team in mexico.",
+    "line4": "this is not a template. this is engineering.",
+    "word1": "DESIGN",
+    "word2": "CODE",
+    "word3": "SCALE",
+    "stage1": {
+      "p1": "we design websites, apps and dashboards that make sense at first glance.",
+      "p2": "every screen starts from how your team works, not from a template.",
+      "p3": "in your language, for your market, with your brand up front."
+    },
+    "stage2": {
+      "p1": "we write the code: web, process automation, whatsapp chatbots and private ai.",
+      "p2": "no dependencies you don't control, and your data stays home.",
+      "p3": "you talk directly to the people who program it."
+    },
+    "stage3": {
+      "p1": "what we build takes growth: more customers, more data, more team.",
+      "p2": "and we stay close when it's time to expand it."
+    }
   }
 }

@@ -21,7 +21,6 @@
   },
   "hero": {
     "kicker": "Kavento — Soluciones Digitales",
-    "titleLine1": "Construimos tecnología que",
     "lead": "Somos un equipo mexicano. Construimos software a la medida, de punta a punta.",
     "ctaPrimary": "Cuéntanos qué necesitas",
     "ctaSecondary": "Ver qué hacemos",
@@ -35,12 +34,9 @@
     "cardTeamLabel": "Quién lo hace",
     "cardTeamValue": "Equipo mexicano",
     "cardTeamNote": "Hablas directo con quien escribe el código.",
-    "word1": "Escala",
-    "word2": "Automatiza",
-    "word3": "Vende",
-    "word4": "Aguanta",
     "place": "Ciudad de México · Remoto",
-    "vertical": "Software a la medida"
+    "dragHint": "Arrastra para girar",
+    "gauge": "Avance de la página"
   },
   "about": {
     "title": "¿A qué nos dedicamos?",
@@ -152,5 +148,28 @@
     "quotePlaceholder": "[Texto de la reseña. Pide al cliente dos o tres frases sobre qué le resolvimos, en cuánto tiempo y qué cambió después.]",
     "namePlaceholder": "[Nombre del cliente]",
     "rolePlaceholder": "[Puesto · Empresa]"
+  },
+  "journey": {
+    "line1": "EL SOFTWARE GENÉRICO NO ENCAJA. ¿POR QUÉ CONFORMARSE?",
+    "line2": "en kavento creemos que cada negocio merece tecnología hecha a su medida.",
+    "line3": "por eso diseñamos, construimos y automatizamos de punta a punta, con el equipo en méxico.",
+    "line4": "esto no es una plantilla. esto es ingeniería.",
+    "word1": "DISEÑO",
+    "word2": "CÓDIGO",
+    "word3": "ESCALA",
+    "stage1": {
+      "p1": "diseñamos sitios web, aplicaciones y paneles que se entienden a la primera.",
+      "p2": "cada pantalla nace de cómo trabaja tu equipo, no de una plantilla.",
+      "p3": "en español, para méxico, con tu marca al frente."
+    },
+    "stage2": {
+      "p1": "escribimos el código: web, automatización de procesos, chatbots de whatsapp e ia privada.",
+      "p2": "sin dependencias que no controles y con el dato dentro de tu casa.",
+      "p3": "hablas directo con quien lo programa."
+    },
+    "stage3": {
+      "p1": "lo que construimos aguanta el crecimiento: más clientes, más datos, más equipo.",
+      "p2": "y seguimos cerca cuando toca ampliarlo."
+    }
   }
 }

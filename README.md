@@ -6,8 +6,12 @@ Español por defecto, con conmutador a inglés que no recarga la página.
 - **Framework:** Next.js 16 (App Router) + TypeScript estricto
 - **Estilos:** Tailwind CSS v4 sobre variables CSS (design tokens)
 - **Interfaz:** motor propio de Liquid Glass (filtros SVG + backdrop-filter)
-- **Scroll:** apilado de secciones tipo baraja, con cortinas, escrito a mano
-- **Dependencias de terceros:** ninguna. Solo Next y React.
+- **Portada 3D:** cinta de Möbius de vidrio con dispersión y "KAVENTO" en
+  letras extruidas, con un recorrido de scroll de seis tramos
+  (three.js + React Three Fiber + GSAP ScrollTrigger + Lenis), ingeniería
+  inversa de [altitude101.com](https://altitude101.com/)
+- **Scroll:** Lenis para el desplazamiento suave; apilado de secciones
+  tipo baraja, con cortinas, escrito a mano
 - **Contacto:** enlace profundo a WhatsApp, sin backend
 
 ---
@@ -130,16 +134,25 @@ src/
   app/
     layout.tsx        Tipografías, metaetiquetas, idioma inicial
     page.tsx          Composición de la página única
-    globals.css       Design tokens, apilado y campo de fondo
+    globals.css       Design tokens, apilado, recorrido 3D y medidor
     glass.css         Motor de Liquid Glass
   components/
-    sections/         Hero, nosotros, servicios, equipo, contacto, pie
+    sections/         Recorrido 3D (journey), nosotros, servicios, equipo,
+                      contacto, pie
+    three/            Escena WebGL: Möbius, letras, anillo de palabras,
+                      esfera de puntos, fondo, coreografía de scroll
     mocks/            Maquetas de interfaz que ilustran cada servicio
-    ui/               Logo, conmutador, botones, filtros SVG, atmósfera
+    ui/               Logo, conmutador, botones, filtros SVG, medidor,
+                      scroll suave, cursor, loader
     stack-root.tsx    Arranque del motor de apilado
   lib/
     use-scroll-stack.ts  Motor de apilado y cortinas
+    lenis-store.ts    Punto de encuentro entre Lenis y quien lo consuma
     i18n/             Diccionarios y proveedor de idioma
+public/
+  fonts/            Space Grotesk Bold en formato typeface.json (para las
+                    letras 3D; se generó con opentype.js a partir del TTF)
+  hdri/             Mapa de entorno CC0 de Poly Haven (cielo despejado)
     services.ts       Lista única de servicios
     site.ts           Configuración del cliente (WhatsApp, redes, URL)
     team.ts           Datos del equipo
@@ -198,13 +211,73 @@ la siguiente se le monta encima como una carta sobre otra.
 - Todo el trabajo por cuadro pasa por un solo `requestAnimationFrame`
   que **separa la fase de lectura de la de escritura**, para no provocar
   layout thrashing.
-- El avance del hero se expone a CSS en `--curtain`, que abre el campo
-  de fondo con `clip-path`.
+- La portada 3D no forma parte de la baraja: va antes, con su propio
+  motor, y la primera carta (nosotros) la tapa al subir.
 
 > Si el scroll se rompe o las secciones dejan de empalmarse, revisa que
 > ningún ancestro tenga `overflow: hidden`. En `body` se usa
 > `overflow-x: clip` justamente por eso: `hidden` convierte al body en
 > contenedor de scroll y anula todos los `sticky`.
+
+---
+
+## Recorrido 3D (portada)
+
+Ingeniería inversa de la portada de altitude101.com (Metabole Studio),
+adaptada a la paleta de Kavento. Vive en `src/components/three/` y en
+`src/components/sections/journey.tsx`.
+
+**Qué hay en la escena** (`scene.tsx`):
+
+- `mobius.tsx` — la cinta de Möbius. No se carga ningún modelo: la
+  geometría se genera por código (`mobius-geometry.ts`) barriendo un
+  rectángulo redondeado a lo largo de un círculo con media vuelta. El
+  material es el del original (`MeshPhysicalMaterial` con
+  `dispersion: 5`, `ior: 1.2`, `roughness: 0.1`, mapa de entorno HDRI),
+  con dos desviaciones documentadas en el archivo: transmisión 1 en vez
+  de 1.5 (sobre fondo oscuro 1.5 se quema a blanco) y algo de
+  iridiscencia para que tenga color aunque no haya nada brillante detrás.
+- `hero-letters.tsx` — "KAVENTO" en siete letras extruidas
+  (`Text3D`, Space Grotesk Bold), con kerning manual y un shader de
+  degradado en espacio de mundo (`gradient-material.tsx`:
+  naranja → dorado → teal). El grupo se escala para ocupar el 84 % del
+  ancho visible a su profundidad, así la palabra es enorme en cualquier
+  pantalla.
+- `word-ring.tsx` — tres palabras (DISEÑO / CÓDIGO / ESCALA) en tres
+  lados de un cuadrado alrededor de la cámara; el scroll lo gira de
+  cuarto en cuarto.
+- `dots-sphere.tsx` — esfera de puntos que envuelve la cámara.
+- `backdrop.tsx` — plano lejano con las tres masas de luz de la paleta,
+  para que el vidrio tenga algo que refractar.
+
+**Cómo se mueve** (`use-journey.ts`, `smooth-transform.ts`,
+`constants.ts`):
+
+- Seis bloques vacíos (`#section-1` … `#section-8`) dan recorrido a la
+  escena fija. Seis disparadores de GSAP ScrollTrigger, uno por tramo,
+  dejan *objetivos* (posición, rotación, giro) en un almacén compartido
+  (`scene-store.ts`); el bucle de render los persigue con inercia
+  (`SmoothTransform`, puerto del sistema del original). Nada pasa por
+  estado de React.
+- Tramos: portada (el modelo se va a la derecha y las letras suben
+  escalonadas) → manifiesto (vuelta completa sobre X, cuatro líneas de
+  texto) → tramo fijado con imán en cada palabra (vuelve al centro,
+  retrocede, anillo de palabras) → dos vuelcos → cierre (la cámara cae,
+  el modelo se apaga). Los anclajes y tiempos están en `PINS`, `LERP`,
+  `HERO_LETTERS` y `DRAG` de `constants.ts`.
+- Ratón: inclina modelo, letras y puntos con distinta amplitud. En la
+  portada se puede arrastrar el modelo (con inercia; el giro automático
+  vuelve a los 800 ms).
+- El medidor de la derecha (`scroll-gauge.tsx`) son 101 rayas y la
+  cifra 000 % → 101 %, leídas del progreso de Lenis.
+
+**Lenis + GSAP** (`smooth-scroll.tsx`): Lenis con la configuración del
+original (1.2 s, curva exponencial), su reloj lo lleva `gsap.ticker` y
+cada evento de scroll llama a `ScrollTrigger.update`. El motor de
+apilado no necesita saber que existe: Lenis mueve la ventana de verdad.
+
+**Loader**: espera a `load` y al evento `kavento:scene-ready` (letras
+maquetadas); si el WebGL no responde, sigue a los 7 s.
 
 ---
 
@@ -252,10 +325,16 @@ solo para rellenos, bordes y luz. Sobre el fondo general, `#B5A995` da
 
 ## Rendimiento
 
-El sitio **no tiene dependencias de terceros**: ni three.js, ni GSAP, ni
-librerías de animación. Todo el JavaScript del build son 628 KB sin
-comprimir, y prácticamente todo es React y Next; el código propio son
-unos pocos kilobytes.
+Dependencias de terceros: three.js, React Three Fiber, drei, GSAP
+(ScrollTrigger) y Lenis. El lienzo WebGL se carga aparte y solo en
+cliente (`next/dynamic` con `ssr: false`); el resto de la página no
+espera por él.
+
+La escena es lo caro: el vidrio con transmisión renderiza la escena dos
+veces por cuadro, así que el `dpr` va acotado a 1.5 en escritorio y
+1.25 en móvil, y la esfera de puntos lleva menos divisiones que la
+original. Con `prefers-reduced-motion` el modelo no gira solo y no hay
+inclinación con el ratón; el recorrido sigue al scroll.
 
 Reglas que se siguen para que el scroll vaya a 60 fps:
 
@@ -272,16 +351,16 @@ Reglas que se siguen para que el scroll vaya a 60 fps:
 
 Desviaciones respecto del brief original, todas deliberadas:
 
-- **No hay 3D.** El primer montaje usaba react-three-fiber para el sol
-  del hero y cinco escenas abstractas de servicio. Se sustituyeron por
-  maquetas de la interfaz que Kavento realmente construye —un navegador,
-  una tubería de automatización, una tarjeta de métrica, una
-  conversación y un panel de IA— montadas en vidrio. Muestran el
-  producto en lugar de decorar, y pesan cero.
-- **Framer Motion y GSAP no se instalaron.** El apilado, las cortinas y
-  el scroller horizontal están escritos a mano contra la API nativa del
-  DOM, igual que el portafolio que sirvió de referencia. Las
-  transiciones de la interfaz son CSS.
+- **El 3D vuelve, pero solo en la portada.** El primer montaje usaba
+  react-three-fiber para el sol del hero y cinco escenas abstractas de
+  servicio, y se retiró. Ahora hay una sola escena, la del recorrido de
+  la portada (Möbius + letras), calcada de altitude101. Los servicios
+  siguen ilustrados con maquetas DOM de la interfaz que Kavento
+  construye, no con 3D.
+- **GSAP se usa solo para la coreografía 3D.** El apilado, las cortinas
+  y el carrusel de trabajos siguen escritos a mano contra la API nativa
+  del DOM. Framer Motion no se instaló: las transiciones de la interfaz
+  son CSS.
 - **La internacionalización no usa `next-intl`.** Su enfoque enruta por
   idioma (`/es`, `/en`), y navegar entre rutas pierde la posición de
   scroll y rompe el apilado de secciones. El brief pedía que el

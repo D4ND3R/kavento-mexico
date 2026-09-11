@@ -9,7 +9,6 @@ import {
   LOCALE_COOKIE,
   type Locale,
 } from "@/lib/i18n/config";
-import { Atmosphere } from "@/components/ui/atmosphere";
 import { GlassFilters } from "@/components/ui/glass-filters";
 import { PointerFx } from "@/components/ui/pointer-fx";
 import { SmoothScroll } from "@/components/ui/smooth-scroll";
@@ -127,7 +126,6 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
         <GlassFilters />
-        <Atmosphere />
         <SmoothScroll />
         <PointerFx />
         <I18nProvider initialLocale={locale}>{children}</I18nProvider>

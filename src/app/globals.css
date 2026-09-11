@@ -69,8 +69,6 @@
   --gutter: clamp(1.25rem, 5vw, 5rem);
   --measure: 64ch;
 
-  /* Avance de la cortina del campo de fondo (0→1). */
-  --curtain: 0;
   /* Apertura en abanico de las tarjetas de reseña (0→1). */
   --spread: 0;
 }
@@ -200,35 +198,8 @@ body {
 }
 
 /* ============================================================
-   Titular: rodillo de palabras y hover por letra
+   Titulares: hover por letra
    ============================================================ */
-
-/* Ventana de una línea de alto: la palabra que sale se va por arriba
-   y la que entra llega por abajo. */
-.roll-host {
-  display: inline-block;
-  overflow: hidden;
-  /* `contain: paint` obliga a recortar en el momento de pintar. Sin
-     esto, con la pista promovida a su propia capa, el compositor deja
-     asomar la palabra vecina durante la transición. */
-  contain: paint;
-  vertical-align: bottom;
-  height: 1.08em;
-}
-
-.roll-track {
-  display: block;
-  transition: transform 450ms var(--ease-spring);
-  /* Sin `will-change`: promover la pista a su propia capa la saca del
-     recorte del contenedor y deja asomar la palabra vecina. */
-}
-
-.roll-word {
-  display: block;
-  height: 1.08em;
-  white-space: nowrap;
-  color: var(--accent-to);
-}
 
 /* Cada letra es su propia caja para poder reaccionar sola al cursor. */
 .h-letter {
@@ -265,9 +236,6 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .roll-track {
-    transition: none;
-  }
   .h-letter:hover {
     transform: none;
   }
@@ -338,12 +306,6 @@ body {
 .stack-5 { z-index: 13; }
 .stack-6 { z-index: 14; }
 
-/* La portada se deja transparente para que el campo atmosférico se vea
-   entero y la cortina tenga dónde abrirse. */
-.stack-1 {
-  background-color: transparent;
-}
-
 /* Cada carta lleva su propia luz local: sin algo con estructura
    detrás, el vidrio no refracta nada. */
 .stack::before {
@@ -365,20 +327,11 @@ body {
     );
 }
 
-.stack-1::before {
-  content: none;
-}
-
 /* El contenido va por encima de esa luz. Las cortinas llevan su
    z-index en el atributo style, así que no las alcanza esta regla. */
 .stack > * {
   position: relative;
   z-index: 1;
-}
-
-[data-recede] {
-  transform-origin: 50% 35%;
-  will-change: transform, opacity;
 }
 
 /* ============================================================
@@ -417,80 +370,6 @@ body {
     calc(58% + 62% * var(--reveal, 1)) calc(4% + 116% * var(--reveal, 1)) at 50%
       -4%
   );
-}
-
-/* ============================================================
-   Campo de fondo
-   ============================================================ */
-
-.atmosphere {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  clip-path: inset(
-    calc(7% - 7% * var(--curtain)) calc(11% - 11% * var(--curtain)) round
-      calc(44px - 44px * var(--curtain))
-  );
-}
-
-@media (max-width: 640px) {
-  .atmosphere {
-    clip-path: inset(
-      calc(4% - 4% * var(--curtain)) calc(5% - 5% * var(--curtain)) round
-        calc(28px - 28px * var(--curtain))
-    );
-  }
-}
-
-.atmosphere__glow {
-  position: absolute;
-  inset: -25%;
-  background:
-    radial-gradient(38% 44% at 74% 30%, var(--glow-warm) 0%, transparent 68%),
-    radial-gradient(30% 36% at 24% 72%, var(--glow-teal) 0%, transparent 70%),
-    radial-gradient(44% 40% at 46% 108%, var(--glow-solar) 0%, transparent 72%);
-  animation: atmosphere-drift 34s var(--ease-out-expo) infinite alternate;
-}
-
-@keyframes atmosphere-drift {
-  from {
-    transform: translate3d(-2.5%, -1.5%, 0) scale(1);
-  }
-  to {
-    transform: translate3d(2.5%, 2%, 0) scale(1.08);
-  }
-}
-
-.atmosphere__slats {
-  position: absolute;
-  inset: -30%;
-  opacity: 0.5;
-  background: repeating-linear-gradient(
-    114deg,
-    rgba(255, 255, 255, 0) 0px,
-    rgba(255, 255, 255, 0.028) 42px,
-    rgba(255, 244, 232, 0.05) 88px,
-    rgba(255, 255, 255, 0.012) 140px,
-    rgba(255, 255, 255, 0) 210px
-  );
-  animation: atmosphere-slide 46s linear infinite;
-}
-
-@keyframes atmosphere-slide {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(-210px, 96px, 0);
-  }
-}
-
-.atmosphere__grain {
-  position: absolute;
-  inset: 0;
-  opacity: 0.05;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 /* ============================================================
@@ -808,10 +687,6 @@ body[data-loading="true"] {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
-  }
-
-  .atmosphere {
-    clip-path: none;
   }
 
   .a-stagger > * {
@@ -1165,5 +1040,303 @@ body[data-cursor="custom"] * {
   .h-letter--reveal {
     opacity: 1;
     transform: none;
+  }
+}
+
+/* ============================================================
+   Recorrido 3D (portada)
+   Ingeniería inversa de altitude101.com: un lienzo WebGL fijo detrás,
+   bloques vacíos que dan scroll delante, y tres capas de texto fijas
+   que la coreografía enciende por tramos. Todas las capas van por
+   debajo del z-index de la baraja (10+), así la primera carta las
+   tapa al subir.
+   ============================================================ */
+
+.journey {
+  position: relative;
+  z-index: 5;
+  /* Mismo color que el lienzo: si el WebGL tarda, no hay salto. */
+  background-color: var(--bg-primary);
+}
+
+.scene-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-color: var(--bg-primary);
+}
+
+.scene-canvas canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.journey__spacer {
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* El bloque de portada sí recibe el puntero: es donde se arrastra. */
+#section-1 {
+  pointer-events: auto;
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+#section-1:active {
+  cursor: grabbing;
+}
+
+.journey [data-hidden="true"] {
+  visibility: hidden;
+}
+
+/* --- portada ---------------------------------------------------- */
+
+.journey__hero {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.journey__hero-grid {
+  position: relative;
+  height: 100%;
+}
+
+.journey__kicker {
+  position: absolute;
+  left: var(--gutter);
+  top: calc(var(--gutter) + 4.5rem);
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.journey__place {
+  position: absolute;
+  right: var(--gutter);
+  top: calc(var(--gutter) + 4.5rem);
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+@media (min-width: 1024px) {
+  .journey__place {
+    display: flex;
+  }
+}
+
+.journey__foot {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: clamp(4.5rem, 12vh, 7.5rem);
+  pointer-events: auto;
+}
+
+@media (min-width: 768px) {
+  .journey__foot {
+    right: auto;
+    max-width: 34rem;
+  }
+}
+
+.journey__hint {
+  position: absolute;
+  left: var(--gutter);
+  bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--text-faint);
+}
+
+.journey__hint-line {
+  position: relative;
+  display: block;
+  width: 1px;
+  height: 1.5rem;
+  overflow: hidden;
+  background: var(--border-subtle);
+}
+
+.journey__hint-line > span {
+  position: absolute;
+  inset: 0 0 50% 0;
+  background: var(--accent-from);
+  animation: kv-drift 2.6s ease-in-out infinite;
+}
+
+/* --- manifiesto ------------------------------------------------- */
+
+.journey__manifesto {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  width: 90dvw;
+  padding-inline: var(--gutter);
+  pointer-events: none;
+}
+
+.journey__manifesto-inner {
+  line-height: 1.2;
+}
+
+.journey__line {
+  opacity: 0;
+  margin-top: 1rem;
+  max-width: 62ch;
+  font-size: clamp(1rem, 1.35vw, 1.1875rem);
+  color: var(--text-primary);
+  will-change: transform, opacity, filter;
+}
+
+.journey__line--lead {
+  margin-top: 0;
+  max-width: none;
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.5rem, 4vw, 6vh);
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+}
+
+@media (min-width: 640px) {
+  .journey__line--lead {
+    width: 70vw;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* --- etapas finales --------------------------------------------- */
+
+.journey__final {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.journey__stage {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 15vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0;
+}
+
+@media (min-width: 768px) {
+  .journey__stage {
+    bottom: 10vh;
+  }
+}
+
+.journey__stage-line {
+  margin-inline: auto;
+  max-width: 900px;
+  padding-inline: var(--gutter);
+  text-align: center;
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 0.75rem;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  opacity: 0;
+  will-change: transform, opacity, filter;
+}
+
+@media (min-width: 768px) {
+  .journey__stage-line {
+    padding-inline: 0;
+    font-size: 1.125rem;
+  }
+}
+
+/* --- medidor de scroll ------------------------------------------ */
+
+.scroll-gauge {
+  position: fixed;
+  top: 50%;
+  right: 1rem;
+  z-index: 40;
+  display: none;
+  width: 0.25rem;
+  transform: translateY(-50%);
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 1px;
+  pointer-events: none;
+}
+
+@media (min-width: 768px) {
+  .scroll-gauge {
+    display: flex;
+  }
+}
+
+.scroll-gauge__label {
+  position: absolute;
+  right: 1rem;
+  bottom: 0;
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  width: 2.5rem;
+  text-align: right;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+}
+
+.scroll-gauge__label > span {
+  transform: translateY(50%);
+  display: block;
+  width: 100%;
+}
+
+.scroll-gauge__tick {
+  display: block;
+  height: 1px;
+  width: 0.25rem;
+  background: var(--text-faint);
+  transform-origin: right center;
+  opacity: 0.45;
+}
+
+.scroll-gauge__tick--major {
+  width: 0.5rem;
+  opacity: 0.7;
+}
+
+.scroll-gauge__tick[data-lit="true"] {
+  background: var(--accent-from);
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journey__line,
+  .journey__stage-line {
+    filter: none !important;
   }
 }

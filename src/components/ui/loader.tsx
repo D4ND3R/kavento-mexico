@@ -31,9 +31,21 @@ export function Loader() {
 
     let hideTimer = 0;
     let readyTimer = 0;
+    let finished = false;
+
+    // Se espera a dos cosas: la ventana cargada y la escena 3D
+    // maquetada (el HDRI, la fuente y las geometrías tardan más que el
+    // HTML). Si la escena no avisa —WebGL apagado, por ejemplo— se
+    // sigue igualmente a los 7 s: mejor una portada sin 3D que una
+    // pantalla de carga eterna.
+    let windowLoaded = document.readyState === "complete";
+    let sceneReady = document.documentElement.dataset.sceneReady === "true";
 
     function finish() {
+      if (finished) return;
+      finished = true;
       window.clearInterval(tick);
+      window.clearTimeout(readyTimer);
       setProgress(100);
       setDone(true);
       hideTimer = window.setTimeout(() => {
@@ -42,17 +54,34 @@ export function Loader() {
       }, 1700);
     }
 
-    if (document.readyState === "complete") {
-      readyTimer = window.setTimeout(finish, 620);
-    } else {
-      window.addEventListener("load", finish, { once: true });
+    function check() {
+      if (windowLoaded && sceneReady) {
+        readyTimer = window.setTimeout(finish, 420);
+      }
     }
+
+    function onLoad() {
+      windowLoaded = true;
+      check();
+    }
+
+    function onScene() {
+      sceneReady = true;
+      check();
+    }
+
+    window.addEventListener("load", onLoad, { once: true });
+    window.addEventListener("kavento:scene-ready", onScene, { once: true });
+    const bailout = window.setTimeout(finish, 7000);
+    check();
 
     return () => {
       window.clearInterval(tick);
       window.clearTimeout(hideTimer);
       window.clearTimeout(readyTimer);
-      window.removeEventListener("load", finish);
+      window.clearTimeout(bailout);
+      window.removeEventListener("load", onLoad);
+      window.removeEventListener("kavento:scene-ready", onScene);
       delete document.body.dataset.loading;
     };
   }, []);
