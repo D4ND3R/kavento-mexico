@@ -1,5 +1,6 @@
 "use client";
 
+import { FitBox } from "@/components/mocks/fit-box";
 import { WhatsappGlyph } from "@/components/ui/whatsapp-glyph";
 import { useTranslations } from "@/lib/i18n/provider";
 import type { ServiceId } from "@/lib/services";
@@ -14,6 +15,11 @@ import type { ServiceId } from "@/lib/services";
    Todo es DOM y CSS: sin canvas, sin WebGL, sin un solo kilobyte de
    librería. Son decorativas —lo que dicen ya está en el texto de al
    lado— así que el contenedor las marca como tales.
+
+   Cada maqueta se diseña a un tamaño fijo (MOCK_SIZE) y <FitBox> la
+   escala para que quepa en el hueco de la tarjeta: en escritorio va a
+   tamaño real y en un teléfono se encoge entera en lugar de salirse o
+   cortarse.
    ================================================================== */
 
 /** Barra de puntos del cromo de ventana. */
@@ -79,7 +85,7 @@ function BrowserMock() {
               "linear-gradient(118deg, rgba(255,122,26,.55), rgba(255,201,74,.28) 55%, rgba(47,168,184,.22))",
           }}
         />
-        <div className="mt-4 flex flex-col gap-2">
+        <div className="mt-3 flex flex-col gap-2">
           <Line w="72%" />
           <Line w="54%" dim />
         </div>
@@ -90,11 +96,11 @@ function BrowserMock() {
         >
           {t("mocks.browserCta")}
         </span>
-        <div className="mt-4 grid flex-[0.72] grid-cols-3 gap-2">
+        <div className="mt-3 grid flex-[0.72] grid-cols-3 gap-2">
           {[0, 1, 2].map((i) => (
             <div
               key={i}
-              className="min-h-10 rounded-lg"
+              className="min-h-8 rounded-lg"
               style={{ background: "rgba(255,244,232,0.07)" }}
             />
           ))}
@@ -107,6 +113,9 @@ function BrowserMock() {
 /* ------------------------------------------------------------------
    Automatización — una tubería con un pulso viajando
    ------------------------------------------------------------------ */
+/** Tamaño de diseño de las maquetas, en px. */
+const MOCK_SIZE = { width: 300, height: 300 };
+
 function PipelineMock() {
   const t = useTranslations();
   const steps = [
@@ -117,7 +126,7 @@ function PipelineMock() {
   ];
 
   return (
-    <div className="lg lg--plain lg--flush flex h-full w-full flex-col justify-center gap-5 p-5 sm:p-7">
+    <div className="lg lg--plain lg--flush flex h-full w-full flex-col justify-center gap-3 overflow-hidden p-5">
       <span className="flex items-center gap-2 text-[0.75rem] text-muted">
         <Live />
         {t("mocks.pipelineStatus")}
@@ -126,7 +135,7 @@ function PipelineMock() {
       <ol className="flex flex-col gap-0">
         {steps.map((step, i) => (
           <li key={step}>
-            <div className="lg lg--plain lg--flush flex items-center gap-3 rounded-[var(--r-card)] px-3.5 py-3">
+            <div className="lg lg--plain lg--flush flex items-center gap-3 rounded-[var(--r-card)] px-3.5 py-2.5">
               <span
                 className="size-1.5 shrink-0 rounded-full"
                 style={{
@@ -225,7 +234,7 @@ function DeviceMock() {
 function ChatMock() {
   const t = useTranslations();
   return (
-    <div className="lg lg--plain lg--flush flex h-full w-full flex-col justify-center gap-3 p-5 sm:p-7">
+    <div className="lg lg--plain lg--flush flex h-full w-full flex-col justify-center gap-3 overflow-hidden p-5">
       <span className="mb-1 flex items-center gap-2 text-[0.75rem] text-muted">
         <span className="text-teal">
           <WhatsappGlyph size={15} />
@@ -281,7 +290,7 @@ function Bubble({
 function AiMock() {
   const t = useTranslations();
   return (
-    <div className="lg lg--plain lg--flush flex h-full w-full flex-col justify-center gap-4 p-5 sm:p-7">
+    <div className="lg lg--plain lg--flush flex h-full w-full flex-col justify-center gap-4 overflow-hidden p-5">
       <span className="lg lg--plain lg--flush block rounded-[var(--r-card)] px-3.5 py-3 text-[0.8125rem] text-muted">
         {t("mocks.aiPrompt")}
       </span>
@@ -341,7 +350,9 @@ export function ServiceMock({ id }: { id: ServiceId }) {
   const Mock = MOCKS[id];
   return (
     <div aria-hidden="true" className="h-full w-full">
-      <Mock />
+      <FitBox width={MOCK_SIZE.width} height={MOCK_SIZE.height}>
+        <Mock />
+      </FitBox>
     </div>
   );
 }
