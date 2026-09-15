@@ -2095,3 +2095,168 @@ body[data-cursor="custom"] * {
     animation: none;
   }
 }
+
+/* ============================================================
+   Móvil
+   Todo lo de este bloque aplica SOLO por debajo de 768px o en
+   dispositivos sin cursor (hover: none). El escritorio no cambia.
+
+   Tres ideas:
+   1. Rendimiento: menos desenfoque y sin refracción SVG en el vidrio
+      (el filtro de desplazamiento sobre el backdrop es lo más caro que
+      hay en la página y en un teléfono baja a 20 fps).
+   2. Tacto: lo que dependía de hover (etiqueta que fluye, destello,
+      tarjetas que se atenúan, frase del caso que se despliega) se
+      apaga o se muestra siempre; en pantalla táctil el hover se queda
+      pegado tras el toque y se ve roto.
+   3. Espacio: portada con botones a todo el ancho por encima del
+      pulgar, recorrido más corto, pósters y títulos más contenidos,
+      zona segura del iPhone respetada.
+   ============================================================ */
+
+@media (max-width: 767px) {
+  :root {
+    --glass-blur: 14px;
+    --section-y: clamp(4.5rem, 10vh, 7rem);
+    --section-y-wide: clamp(5.5rem, 12vh, 9rem);
+  }
+
+  /* Sin refracción SVG: solo desenfoque y saturación. */
+  .lg--refract {
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) !important;
+  }
+
+  .t-h2 {
+    font-size: clamp(2rem, 9vw, 2.375rem);
+  }
+
+  /* --- portada ------------------------------------------------- */
+  .journey__kicker {
+    top: calc(var(--gutter) + 4rem);
+    font-size: 0.6875rem;
+  }
+
+  .journey__foot {
+    bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .journey__foot .t-lead {
+    font-size: 1rem;
+    max-width: 30ch;
+  }
+
+  /* Botones a todo el ancho, uno debajo del otro: zona del pulgar. */
+  .journey__foot .lg {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+
+  .journey__hint {
+    bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .journey__manifesto {
+    width: 100%;
+  }
+
+  .journey__line--lead {
+    font-size: clamp(1.5rem, 7.2vw, 2rem);
+  }
+
+  .journey__stage {
+    bottom: calc(11vh + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* --- carrusel ------------------------------------------------ */
+  .deck {
+    height: clamp(24rem, 62vh, 32rem);
+  }
+
+  .deck__track {
+    width: min(20rem, 82vw);
+  }
+
+  /* --- casos --------------------------------------------------- */
+  /* Alto fijo en vez de proporción: con aspect-ratio + min-height el
+     póster crecía a lo ancho y se salía de la columna. */
+  .case {
+    aspect-ratio: auto;
+    width: 100%;
+    height: min(64vh, 32rem);
+    min-height: 0;
+  }
+
+  .case__top {
+    flex-wrap: wrap;
+    row-gap: 0.25rem;
+  }
+
+  .case__client {
+    font-size: clamp(2.25rem, 11vw, 3rem);
+  }
+
+  /* --- equipo -------------------------------------------------- */
+  .marquee__item {
+    font-size: clamp(1.375rem, 6vw, 1.75rem);
+  }
+
+  /* --- botón flotante y navbar -------------------------------- */
+  .wa-fab {
+    bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* Dispositivos sin cursor: el hover no existe, no lo finjas. */
+@media (hover: none) {
+  /* La etiqueta no fluye ni hay destello: un toque dejaría el botón a
+     medio giro. */
+  .flow > span:last-child {
+    display: none;
+  }
+  .flow-host:hover .flow > span:first-child {
+    transform: none;
+  }
+  .sheen {
+    display: none;
+  }
+
+  /* Las tarjetas no se levantan ni se atenúan entre sí al tocar. */
+  .lg-hover:hover {
+    transform: none;
+  }
+  .index-cards:hover > li {
+    opacity: 1;
+  }
+
+  /* La frase del cliente se muestra siempre: no hay hover que la abra. */
+  .case__quote {
+    max-height: 6rem;
+    opacity: 1;
+  }
+  .case__foot,
+  .group:hover .case__client {
+    transform: none;
+  }
+
+  /* El retrato no se inclina (el dedo arrastrando la página lo movía). */
+  .team-frame,
+  .group:hover .team-frame {
+    transform: none;
+  }
+}
+
+/* Escritorio: las tarjetas índice de "nosotros" se atenúan entre sí. */
+@media (hover: hover) {
+  .index-cards:hover > li {
+    opacity: 0.45;
+  }
+  .index-cards > li:hover {
+    opacity: 1;
+  }
+}
+
+/* El carrusel se desliza con el dedo en horizontal sin bloquear el
+   scroll vertical de la página. */
+.deck {
+  touch-action: pan-y;
+}

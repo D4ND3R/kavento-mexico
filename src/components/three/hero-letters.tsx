@@ -98,7 +98,10 @@ export function HeroLetters({ store }: { store: SceneStore }) {
     const fov = (SCENE.CAMERA_FOV * Math.PI) / 180;
     const visibleHeight = 2 * distance * Math.tan(fov / 2);
     const visibleWidth = visibleHeight * (size.width / size.height);
-    const scale = (visibleWidth * FILL) / total;
+    // En pantallas estrechas la palabra puede llenar casi todo el ancho:
+    // no compite con nada a los lados.
+    const fill = size.width < 768 ? 0.94 : FILL;
+    const scale = (visibleWidth * fill) / total;
 
     // Ligeramente por debajo del centro, para que el modelo la cruce.
     // En pantallas estrechas el texto de la portada ocupa la mitad de

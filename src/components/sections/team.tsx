@@ -127,6 +127,9 @@ function TeamCard({
   const frameRef = useRef<HTMLDivElement>(null);
 
   const tilt = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
+    // Solo con ratón: el dedo que arrastra la página también dispara
+    // pointermove y la tarjeta temblaba con cada scroll.
+    if (event.pointerType !== "mouse") return;
     const frame = frameRef.current;
     if (!frame) return;
     const rect = frame.getBoundingClientRect();

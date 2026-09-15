@@ -107,12 +107,12 @@ export function About() {
         {/* Índice de tres tarjetas: al apuntar a una, las otras se apagan. */}
         <ul
           data-stagger
-          className="a-stagger grid gap-3 sm:grid-cols-3 [&:hover>li]:opacity-45"
+          className="a-stagger index-cards grid gap-3 sm:grid-cols-3"
         >
           {CARDS.map((card) => (
             <li
               key={card.href}
-              className="transition-opacity duration-[var(--dur-slow)] ease-[var(--ease-liquid)] hover:!opacity-100"
+              className="transition-opacity duration-[var(--dur-slow)] ease-[var(--ease-liquid)]"
             >
               <a
                 href={card.href}

@@ -47,7 +47,11 @@ const MATERIAL = {
   iridescenceThicknessRange: [120, 460] as [number, number],
 } as const;
 
-export function Mobius({ store }: { store: SceneStore }) {
+/**
+ * En móvil baja la dispersión (tres muestras por píxel → una) y se
+ * conserva la iridiscencia, que es barata y da el color.
+ */
+export function Mobius({ store, lowPower = false }: { store: SceneStore; lowPower?: boolean }) {
   const geometry = useMemo(() => createMobiusGeometry(), []);
   const envMap = useEnvironment({ files: HDRI_PATH });
 
@@ -84,7 +88,7 @@ export function Mobius({ store }: { store: SceneStore }) {
               color="#ffffff"
               clearcoat={MATERIAL.clearcoat}
               clearcoatRoughness={MATERIAL.clearcoatRoughness}
-              dispersion={MATERIAL.dispersion}
+              dispersion={lowPower ? 0 : MATERIAL.dispersion}
               envMap={envMap}
               envMapIntensity={MATERIAL.envMapIntensity}
               ior={MATERIAL.ior}

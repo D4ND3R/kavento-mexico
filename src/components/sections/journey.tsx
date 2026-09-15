@@ -253,10 +253,10 @@ export function Journey() {
           alturas son las del original, salvo el manifiesto y el tramo
           final, algo más cortos. */}
       <div id="section-1" className="journey__spacer h-[110dvh] md:h-[150vh]" />
-      <div id="section-4" className="journey__spacer h-[300dvh]" />
+      <div id="section-4" className="journey__spacer h-[220dvh] md:h-[300dvh]" />
       <div id="section-5" className="journey__spacer h-[30vh]" />
       <div id="section-6" className="journey__spacer h-[30vh]" />
-      <div id="section-7" className="journey__spacer h-[450vh]" />
+      <div id="section-7" className="journey__spacer h-[320vh] md:h-[450vh]" />
       <div id="section-8" className="journey__spacer h-[70vh] md:h-screen" />
     </section>
   );

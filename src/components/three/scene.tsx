@@ -57,8 +57,8 @@ export function Scene({ store, words, isMobile, reducedMotion }: SceneProps) {
           >
             <HeroLetters store={store} />
           </group>
-          <Mobius store={store} />
-          <DotsSphere store={store} />
+          <Mobius store={store} lowPower={isMobile} />
+          <DotsSphere store={store} lowPower={isMobile} />
           <WordRing store={store} words={words} isMobile={isMobile} />
         </Suspense>
         <Driver store={store} isMobile={isMobile} reducedMotion={reducedMotion} />

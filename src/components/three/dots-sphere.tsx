@@ -15,8 +15,12 @@ import type { SceneStore } from "./scene-store";
  * cinco; es lo que da la sensación de que el espacio entero se mueve
  * y no solo el modelo.
  */
-export function DotsSphere({ store }: { store: SceneStore }) {
-  const geometry = useMemo(() => new SphereGeometry(145, 300, 170), []);
+export function DotsSphere({ store, lowPower = false }: { store: SceneStore; lowPower?: boolean }) {
+  // En móvil, un tercio de los puntos: es fondo, no protagonista.
+  const geometry = useMemo(
+    () => (lowPower ? new SphereGeometry(145, 170, 96) : new SphereGeometry(145, 300, 170)),
+    [lowPower],
+  );
   const material = useMemo(
     () =>
       new PointsMaterial({
